@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Orv Hub - Categories">
+    <title>Orv Hub - Categories</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --hover-gradient: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            color: #ffffff;
+        }
+
+        /* Video background */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: blur(15px) brightness(0.6);
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .category-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: scale(1.05);
+        }
+
+        .category-card img,
+        .category-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        .category-card img {
+            opacity: 1;
+        }
+
+        .category-card video {
+            opacity: 0;
+        }
+
+        .category-card:hover img {
+            opacity: 0;
+        }
+
+        .category-card:hover video {
+            opacity: 1;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #4f46e5;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="custom-scroll">
+    <!-- Video Background -->
+    <video class="video-bg" autoplay loop muted>
+        <source src="background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
+                    Orv Hub
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/browse" class="text-gray-300 hover:text-white transition-colors">Browse</a>
+                    <a href="/categories" class="text-gray-300 hover:text-white transition-colors">Categories</a>
+                    <a href="/live" class="text-gray-300 hover:text-white transition-colors">Live</a>
+                    <a href="/trending" class="text-gray-300 hover:text-white transition-colors">Trending</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Categories Section -->
+    <section class="min-h-screen flex items-center justify-center px-6 py-20">
+        <div class="container mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-12">Categories</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Loop through 10 categories -->
+                <div class="category-card">
+                    <img src="/path/to/your-image.jpg" alt="Category Image">
+                    <video muted loop>
+                        <source src="/path/to/your-video.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="category-card">
+                    <img src="/path/to/your-image.jpg" alt="Category Image">
+                    <video muted loop>
+                        <source src="/path/to/your-video.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="category-card">
+                    <img src="/path/to/your-image.jpg" alt="Category Image">
+                    <video muted loop>
+                        <source src="/path/to/your-video.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <div class="category-card">
+                    <img src="/path/to/your-image.jpg" alt="Category Image">
+                    <video muted loop>
+                        <source src="/path/to/your-video.mp4" type="video/mp4">
+                    </video>
+                </div>
+                <!-- Repeat for remaining categories (5-10) -->
+            </div>
+        </div>
+    </section>
+</body>
+</html>

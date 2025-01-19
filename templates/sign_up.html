@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Orv Hub - Sign Up">
+    <title>Orv Hub - Sign Up</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            --hover-gradient: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            overflow-x: hidden;
+            color: #ffffff;
+        }
+
+        /* Video background */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: blur(15px) brightness(0.6);
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #4f46e5;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="custom-scroll">
+    <!-- Video Background -->
+    <video class="video-bg" autoplay loop muted>
+        <source src="background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
+                    Orv Hub
+                </a>
+                <a href="/sign-in" class="px-6 py-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sign Up Section -->
+    <section class="min-h-screen flex items-center justify-center px-6">
+        <div class="glass-effect rounded-2xl shadow-lg p-8 max-w-lg w-full">
+            <h1 class="text-4xl font-bold text-center mb-6">
+                Join 
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">Orv Hub</span>
+            </h1>
+            <p class="text-gray-400 text-center mb-8">
+                Create your account to explore premium content and features.
+            </p>
+            <form action="/sign-up" method="POST" class="space-y-6">
+                <div>
+                    <label for="username" class="block text-gray-400 mb-2">Username</label>
+                    <input type="text" id="username" name="username" required 
+                        class="w-full px-4 py-2 rounded-full bg-gray-900 border border-gray-700 focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label for="email" class="block text-gray-400 mb-2">Email Address</label>
+                    <input type="email" id="email" name="email" required 
+                        class="w-full px-4 py-2 rounded-full bg-gray-900 border border-gray-700 focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label for="password" class="block text-gray-400 mb-2">Password</label>
+                    <input type="password" id="password" name="password" required 
+                        class="w-full px-4 py-2 rounded-full bg-gray-900 border border-gray-700 focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label for="confirm-password" class="block text-gray-400 mb-2">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm_password" required 
+                        class="w-full px-4 py-2 rounded-full bg-gray-900 border border-gray-700 focus:border-indigo-500 focus:outline-none">
+                </div>
+                <div class="flex items-center">
+                    <label class="flex items-center text-gray-400">
+                        <input type="checkbox" class="form-checkbox text-indigo-500" required>
+                        <span class="ml-2">I agree to the <a href="/terms" class="text-indigo-500 hover:text-indigo-400">Terms and Conditions</a></span>
+                    </label>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-lg font-semibold transition-colors">
+                    Sign Up
+                </button>
+            </form>
+            <p class="text-center text-gray-400 mt-8">
+                Already have an account? 
+                <a href="/sign-in" class="text-indigo-500 hover:text-indigo-400">Sign In</a>
+            </p>
+        </div>
+    </section>
+</body>
+</html>

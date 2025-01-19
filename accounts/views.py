@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout, authenticate
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import UserProfile
+from django.contrib.auth.forms import PasswordResetForm
+from django.core.mail import send_mail
+from django.conf import settings
 
 @login_required
 def profile_view(request):
@@ -39,3 +43,19 @@ def logout_view(request):
 def profile(request):
     # User profile page
     return render(request, 'accounts/profile.html')
+
+
+def password_reset(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            form.save(
+                request=request,
+                use_https=request.is_secure(),
+                email_template_name='accounts/password_reset_email.html',
+            )
+            messages.success(request, 'Password reset email has been sent.')
+            return redirect('accounts:login')
+    else:
+        form = PasswordResetForm()
+    return render(request, 'accounts/password_reset.html', {'form': form})

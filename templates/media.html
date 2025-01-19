@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Orv Hub - Premium Video Streaming Platform">
+    <title>Orv Hub - Video Streaming</title>
+
+    <!-- Plyr CSS -->
+    <link href="https://cdn.plyr.io/3.6.8/plyr.css" rel="stylesheet" />
+
+    <!-- TailwindCSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-black text-white">
+
+    <!-- Main Media Player Section -->
+    <section class="pt-20 pb-12 px-6">
+        <div class="container mx-auto">
+            <div class="flex flex-col lg:flex-row">
+                <!-- Video Player -->
+                <div class="lg:w-2/3">
+                    <div class="relative w-full">
+                        <!-- Plyr Video Player -->
+                        <video id="player" controls>
+                            <source src="path_to_video.mp4" type="video/mp4" />
+                        </video>
+                    </div>
+
+                    <!-- Video Info Section -->
+                    <div class="text-white mt-6">
+                        <h2 class="text-3xl font-semibold">Video Title</h2>
+                        <div class="flex items-center space-x-6 mt-2 text-gray-400">
+                            <p>Uploaded by <span class="font-semibold text-white">Uploader Name</span></p>
+                            <p class="text-gray-500">10K views • 1 day ago</p>
+                        </div>
+                        <p class="mt-4 text-gray-300">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus viverra ex nec mauris convallis, at gravida elit posuere.</p>
+                    </div>
+                </div>
+
+                <!-- Video Sidebar (for comments or additional info) -->
+                <div class="lg:w-1/3 mt-6 lg:mt-0 lg:ml-12">
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <h3 class="text-xl font-semibold text-white">Comments</h3>
+                        <div class="mt-4 text-gray-400">
+                            <p>Loading comments...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Suggested Videos Section -->
+    <section class="bg-black py-12 px-6">
+        <div class="container mx-auto">
+            <h3 class="text-2xl font-semibold text-white mb-8">Suggested Videos</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="suggested-video bg-gray-800 rounded-lg overflow-hidden">
+                    <a href="#">
+                        <img class="w-full h-40 object-cover" src="video_thumbnail_url.jpg" alt="Suggested Video">
+                        <div class="p-4 text-white">
+                            <h4 class="font-semibold">Suggested Video Title</h4>
+                            <p class="text-gray-400 text-sm">Uploader Name</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="suggested-video bg-gray-800 rounded-lg overflow-hidden">
+                    <a href="#">
+                        <img class="w-full h-40 object-cover" src="video_thumbnail_url.jpg" alt="Suggested Video">
+                        <div class="p-4 text-white">
+                            <h4 class="font-semibold">Suggested Video Title</h4>
+                            <p class="text-gray-400 text-sm">Uploader Name</p>
+                        </div>
+                    </a>
+                </div>
+                <!-- Repeat as needed for more suggested videos -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Plyr.js Script -->
+    <script src="https://cdn.plyr.io/3.6.8/plyr.js"></script>
+    <script>
+        // Initialize Plyr.js
+        const player = new Plyr('#player');
+    </script>
+</body>
+</html>

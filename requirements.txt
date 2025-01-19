@@ -1,0 +1,12 @@
+Django>=4.0,<5.0
+djangorestframework>=3.14
+psycopg2-binary>=2.9  # اگر از PostgreSQL استفاده می‌کنید
+celery>=5.3  # برای تسک‌های پس‌زمینه
+redis>=5.0  # اگر از Redis برای کش یا صف استفاده می‌کنید
+django-cors-headers>=4.0  # برای تنظیمات CORS
+django-environ>=0.10  # برای مدیریت تنظیمات محیطی
+Pillow>=9.0  # برای کار با تصاویر
+django-storages>=1.13  # اگر از ذخیره‌سازی ابری استفاده می‌کنید
+boto3>=1.26  # برای AWS S3
+gunicorn>=20.0  # برای سرور تولیدی
+whitenoise>=6.0  # برای مدیریت فایل‌های استاتیک
