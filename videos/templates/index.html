@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orv Hub - Movie Streaming</title>
+    <style>
+        * {
+            margin: 5px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #121212;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            width: 100%;
+            padding: 0px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar ul {
+            list-style-type: none;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar li {
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar li:hover {
+            color: #bbb;
+            cursor: pointer;
+        }
+
+        .navbar li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+    /* Welcome Text */
+    .welcome-text {
+        font-size: 3rem;
+        font-weight: 700;
+        text-align: center;
+        color: #fff;
+        letter-spacing: 2px;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        margin-top: 100px; /* to create space below the navbar */
+        margin-bottom: 50px;
+        white-space: nowrap; /* Prevent text from breaking to the next line */
+        overflow: hidden; /* Optional: Prevent content from overflowing */
+        text-overflow: ellipsis; /* Optional: Add ellipsis if text overflows */
+    }
+
+        /* Movie Cards */
+        .movie-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-top: 30px;
+            margin-bottom: 50px;
+        }
+
+        .movie-card {
+            position: relative;
+            width: 100%;
+            max-width: 1280px;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            background-color: #1f1f1f;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .movie-card video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;  /* Ensures the video fills the container */
+            object-position: center center; /* Keeps the center of the video visible */
+        }
+
+        .movie-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .movie-card:hover .movie-overlay {
+            opacity: 1;
+        }
+
+        .payment-button {
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #fff;
+            border-radius: 12px;
+            cursor: pointer;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .payment-button:hover {
+            opacity: 1;
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.5);
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .payment-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Footer Text */
+        .footer-text {
+            font-size: 14px;
+            font-weight: 400;
+            color: #fff;
+            text-align: center;
+            margin-top: 50px;
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+
+        .footer-text a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .footer-text a:hover {
+            color: #bbb;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-text {
+                font-size: 2.5rem; /* Adjust font size for smaller screens */
+                letter-spacing: 1px; /* Adjust letter spacing for smaller screens */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#videos">Videos</a></li>
+            <li><a href="#">Categories</a></li>
+            <li><a href="#">Live</a></li>
+            <li><a href="#">Community</a></li>
+            <li><a href="#">Photos & GIFs</a></li>
+        </ul>
+    </div>
+
+    <!-- Welcome Text -->
+    <div class="welcome-text">Welcome to Orv Hub</div>
+
+    <!-- Movie Container -->
+    <div class="movie-container">
+        <!-- Movie 1 -->
+        <div class="movie-card">
+            <video autoplay muted loop id="video1">
+                <source src="Screencast from 2024-12-16 22-32-24.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="movie-overlay">
+                <button class="payment-button" onclick="goToPaymentPage()">Pay $10 to Watch Full Video</button>
+            </div>
+        </div>
+        <!-- Movie 2 -->
+        <div class="movie-card">
+            <video autoplay muted loop id="video2">
+                <source src="3.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="movie-overlay">
+                <button class="payment-button" onclick="goToPaymentPage()">Pay $10 to Watch Full Video</button>
+            </div>
+        </div>
+        <!-- Movie 2 -->
+        <div class="movie-card">
+            <video autoplay muted loop id="video2">
+                <source src="3.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="movie-overlay">
+                <button class="payment-button" onclick="goToPaymentPage()">Pay $10 to Watch Full Video</button>
+            </div>
+        </div>
+        <!-- Movie 2 -->
+        <div class="movie-card">
+            <video autoplay muted loop id="video2">
+                <source src="3.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="movie-overlay">
+                <button class="payment-button" onclick="goToPaymentPage()">Pay $10 to Watch Full Video</button>
+            </div>
+        </div>
+        <!-- Movie 2 -->
+        <div class="movie-card">
+            <video autoplay muted loop id="video2">
+                <source src="3.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="movie-overlay">
+                <button class="payment-button" onclick="goToPaymentPage()">Pay $10 to Watch Full Video</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Text -->
+    <div class="footer-text">
+        <p>© 2024 Orv Hub. All Rights Reserved. <a href="#">Privacy Policy</a> | <a href="#">Terms & Conditions</a></p>
+    </div>
+
+
+    <script>
+        // Function to play the sound when mouse is over the video
+        const videos = document.querySelectorAll('video');
+        videos.forEach(video => {
+            video.addEventListener('mouseover', () => {
+                video.muted = false;  // Unmute the video
+            });
+            video.addEventListener('mouseout', () => {
+                video.muted = true;  // Mute the video again
+            });
+        });
+
+
+        function goToPaymentPage() {
+            window.location.href = "payment-page.html"; // Redirect to the payment page
+        }
+    </script>
+
+</body>
+</html>

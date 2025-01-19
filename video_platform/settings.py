@@ -18,11 +18,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',  # For sites framework (required for allauth)
-    'accounts',  # App for user registration and profiles
-    'videos',    # App for video management
-    'payments',  # App for handling payments and subscriptions
-    'rest_framework',  # For building API if needed
+    'django.contrib.sites',
+    'rest_framework',
+    'rest_framework.authtoken',  # برای احراز هویت کاربران
+    'accounts',      # اپلیکیشن مدیریت کاربران
+    'videos',        # اپلیکیشن مدیریت ویدیوها
+    'payments',      # اپلیکیشن مدیریت پرداخت‌ها و اشتراک‌ها
+    'categories',    # مدیریت دسته‌بندی‌ها
+    'tags',          # برچسب‌ها
+    'moderation',    # نظارت و گزارش تخلفات
+    'subscriptions', # اشتراک‌ها
+    'analytics',     # تحلیل و آمارگیری
 ]
 
 MIDDLEWARE = [
@@ -117,6 +123,7 @@ VIDEO_STREAMING_SERVER = 'your-video-streaming-server-url'
 # SECURE_SSL_REDIRECT = True  # Automatically redirect HTTP to HTTPS
 
 # Custom site domain if needed
+
 SITE_ID = 1
 
 
