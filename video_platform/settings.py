@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     'categories',    # مدیریت دسته‌بندی‌ها
     'tags',          # برچسب‌ها
     'moderation',    # نظارت و گزارش تخلفات
-    'subscriptions', # اشتراک‌ها
     'analytics',     # تحلیل و آمارگیری
 ]
 

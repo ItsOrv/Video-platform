@@ -59,3 +59,35 @@ def password_reset(request):
     else:
         form = PasswordResetForm()
     return render(request, 'accounts/password_reset.html', {'form': form})
+
+def sign_in_view(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, 'Successfully logged in!')
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid email or password.')
+    return render(request, 'sign_in.html')
+
+def sign_up_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        
+        if password != confirm_password:
+            messages.error(request, 'Passwords do not match.')
+        else:
+            try:
+                from accounts.models import CustomUser
+                user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                messages.success(request, 'Account created successfully! Please sign in.')
+                return redirect('sign_in')
+            except Exception as e:
+                messages.error(request, f'Error creating account: {str(e)}')
+    return render(request, 'sign_up.html')

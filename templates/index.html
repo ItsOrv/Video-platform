@@ -2,262 +2,1117 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="description" content="Orv Hub - Premium Video Streaming Platform">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Orv Hub - Premium Video Streaming</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            --hover-gradient: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-            --card-gradient: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
-            --glass-bg: rgba(255, 255, 255, 0.1);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --accent-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            background-color: #0a0a0a;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0f;
             color: #ffffff;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         .glass-effect {
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
 
         .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
         }
 
         .custom-scroll::-webkit-scrollbar-thumb {
-            background: #4f46e5;
-            border-radius: 3px;
-        }
-
-        .video-progress {
-            height: 3px;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .video-progress-bar {
-            height: 100%;
             background: var(--primary-gradient);
-            transition: width 0.2s ease;
+            border-radius: 10px;
         }
 
-        .premium-glow {
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        nav {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .animate-float {
-            animation: float 6s ease-in-out infinite;
+        nav.scrolled {
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
         }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .hero-gradient {
-            background: radial-gradient(circle at top right, #4338ca 0%, transparent 60%),
-                        radial-gradient(circle at bottom left, #6366f1 0%, transparent 60%);
-        }
-
-        .category-card {
+        .nav-link {
+            position: relative;
             transition: all 0.3s ease;
         }
 
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .search-input {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #ffffff !important;
+        }
+
+        .search-input::placeholder {
+            color: rgba(156, 163, 175, 1) !important;
+        }
+
+        .search-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: #667eea !important;
+            color: #ffffff !important;
+        }
+
+        .search-input:-webkit-autofill,
+        .search-input:-webkit-autofill:hover,
+        .search-input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #ffffff !important;
+            -webkit-box-shadow: 0 0 0px 1000px rgba(10, 10, 15, 0.8) inset !important;
+            box-shadow: 0 0 0px 1000px rgba(10, 10, 15, 0.8) inset !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: rgba(102, 126, 234, 0.6);
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .hero-gradient {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(240, 147, 251, 0.2) 0%, transparent 50%),
+                #0a0a0f;
+            position: relative;
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg);
+            }
+            33% { 
+                transform: translateY(-20px) rotate(2deg);
+            }
+            66% { 
+                transform: translateY(-10px) rotate(-2deg);
+            }
+        }
+
+        .animate-float {
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .category-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary-gradient);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .category-card:hover::before {
+            opacity: 0.1;
+        }
+
         .category-card:hover {
-            transform: translateY(-5px) scale(1.02);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+
+        .category-card .icon {
+            transition: all 0.4s ease;
+        }
+
+        .category-card:hover .icon {
+            transform: scale(1.2) rotate(5deg);
         }
 
         .video-card {
-            perspective: 1000px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
         }
 
-        .video-card-inner {
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
 
-        .video-card:hover .video-card-inner {
-            transform: rotateY(180deg);
+        .video-card .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
         }
 
-        .card-front, .card-back {
-            backface-visibility: hidden;
+        .video-card:hover .play-overlay {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
         }
 
-        .card-back {
-            transform: rotateY(180deg);
+        .video-thumbnail {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .video-card:hover .video-thumbnail {
+            transform: scale(1.1);
+        }
+
+        .premium-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(245, 87, 108, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(245, 87, 108, 0.8);
+            }
+        }
+
+        .live-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse-live 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-live {
+            0%, 100% {
+                opacity: 1;
+                box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            }
+            50% {
+                opacity: 0.8;
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+            }
+        }
+
+        .live-dot {
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.3);
+                opacity: 0.7;
+            }
+        }
+
+        .plan-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(102, 126, 234, 0.3);
+        }
+
+        .plan-card.featured {
+            border: 2px solid transparent;
+            background: linear-gradient(#1a1a24, #1a1a24) padding-box,
+                        var(--primary-gradient) border-box;
+        }
+
+        .plan-card.featured::after {
+            content: 'POPULAR';
+            position: absolute;
+            top: 20px;
+            right: -30px;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 4px 40px;
+            font-size: 12px;
+            font-weight: 700;
+            transform: rotate(45deg);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        .feature-card {
+            transition: all 0.4s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .testimonial-card {
+            transition: all 0.4s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-section {
+            background: 
+                radial-gradient(circle at 30% 50%, rgba(102, 126, 234, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(118, 75, 162, 0.2) 0%, transparent 50%);
+        }
+
+        .hero-video-preview {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(102, 126, 234, 0.4);
+        }
+
+        .hero-video-preview::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .watch-now-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .watch-now-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .watch-now-btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Touch-friendly interactions */
+        .touch-manipulation {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .video-card:active {
+                transform: translateY(-4px) scale(1.01);
+            }
+            
+            .btn-primary:active,
+            .btn-secondary:active {
+                transform: scale(0.98);
+            }
+            
+            .category-card:active {
+                transform: translateY(-6px) scale(1.02);
+            }
+            
+            /* Larger touch targets on mobile */
+            a, button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+
+        /* Responsive Typography */
+        @media (max-width: 640px) {
+            h1 { font-size: 2rem !important; }
+            h2 { font-size: 1.75rem !important; }
+            h3 { font-size: 1.5rem !important; }
+            .text-7xl { font-size: 2.5rem !important; }
+            .text-5xl { font-size: 2rem !important; }
+            .text-4xl { font-size: 1.75rem !important; }
+            .text-3xl { font-size: 1.5rem !important; }
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            /* Better spacing on mobile */
+            section {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            /* Stack stats vertically on very small screens */
+            @media (max-width: 480px) {
+                .flex.items-center.space-x-8 {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1.5rem;
+                }
+            }
+            
+            /* Mobile video cards */
+            .video-card {
+                margin-bottom: 1rem;
+            }
+            
+            /* Mobile buttons */
+            .btn-primary,
+            .btn-secondary {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.875rem;
+                min-height: 44px; /* Touch target size */
+            }
+            
+            /* Mobile search */
+            .search-input {
+                width: 100% !important;
+                max-width: 100%;
+            }
+            
+            /* Mobile hero section */
+            .hero-gradient {
+                min-height: auto;
+                padding-top: 6rem;
+                padding-bottom: 3rem;
+            }
+            
+            /* Mobile grid adjustments */
+            .grid {
+                gap: 1rem;
+            }
+            
+            /* Mobile category cards */
+            .category-card {
+                padding: 1.5rem 1rem;
+            }
+            
+            /* Mobile plan cards */
+            .plan-card {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        /* Tablet Optimizations */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 100%;
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+            
+            .grid-cols-4 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        /* Large Desktop Optimizations */
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1600px;
+            }
+        }
+
+        /* Landscape Mobile */
+        @media (max-width: 896px) and (orientation: landscape) {
+            .hero-gradient {
+                min-height: auto;
+                padding-top: 4rem;
+                padding-bottom: 2rem;
+            }
+            
+            nav {
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+            }
+        }
+
+        /* High DPI Displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .video-thumbnail img {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+        }
+
+        /* Safe Area Insets for Notched Devices */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+            
+            nav {
+                padding-left: max(1rem, env(safe-area-inset-left));
+                padding-right: max(1rem, env(safe-area-inset-right));
+            }
+        }
+
+        /* Performance: Reduce animations on low-end devices */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Dark mode support (already dark, but ensure consistency) */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #0a0a0f;
+                color: #ffffff;
+            }
+        }
+
+        /* Skeleton Loaders */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Fade In Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .fade-in-up-delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .fade-in-up-delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .fade-in-up-delay-3 { animation-delay: 0.3s; opacity: 0; }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: min(85vw, 320px);
+            max-width: 320px;
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* Mobile menu backdrop */
+        .mobile-menu-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 40;
+        }
+
+        .mobile-menu-backdrop.active {
+            display: block;
+        }
+
+        /* Swipe to close mobile menu */
+        @media (max-width: 768px) {
+            .mobile-menu {
+                touch-action: pan-y;
+            }
+        }
+
+        /* Video Modal */
+        .video-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .video-modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--primary-gradient);
+            z-index: 9998;
+            transform-origin: left;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Intersection Observer Fade In */
+        .observe-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .observe-fade.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Number Counter Animation */
+        .counter {
+            display: inline-block;
+        }
+
+        /* Search Dropdown */
+        .search-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .search-dropdown.active {
+            display: block;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        /* Hover Video Preview */
+        .video-hover-preview {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .video-card:hover .video-hover-preview {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
         }
     </style>
 </head>
 <body class="custom-scroll">
+    <!-- Scroll Progress Bar -->
+    <div class="scroll-progress" id="scrollProgress"></div>
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 glass-effect">
-        <div class="container mx-auto px-6 py-4">
+    <nav id="navbar" class="fixed w-full z-50 glass-effect">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-8">
-                    <a href="/" class="flex items-center space-x-2">
-                        <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
+                <div class="flex items-center space-x-4 lg:space-x-8">
+                    <a href="/" class="flex items-center space-x-2 group">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                            <i class="fas fa-play text-white text-lg"></i>
+                        </div>
+                        <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
                             Orv Hub
                         </span>
                     </a>
-                    <div class="hidden md:flex items-center space-x-6">
-                        <a href="/browse" class="text-gray-300 hover:text-white transition-colors">Browse</a>
-                        <a href="/categories" class="text-gray-300 hover:text-white transition-colors">Categories</a>
-                        <a href="/live" class="text-gray-300 hover:text-white transition-colors">Live</a>
-                        <a href="/trending" class="text-gray-300 hover:text-white transition-colors">Trending</a>
+                    <div class="hidden lg:flex items-center space-x-8">
+                        <a href="/browse" class="nav-link text-gray-300 hover:text-white font-medium">Browse</a>
+                        <a href="/categories" class="nav-link text-gray-300 hover:text-white font-medium">Categories</a>
+                        <a href="/live" class="nav-link text-gray-300 hover:text-white font-medium">Live</a>
+                        <a href="/trending" class="nav-link text-gray-300 hover:text-white font-medium">Trending</a>
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-6">
+                <div class="flex items-center space-x-3 lg:space-x-6">
+                    <!-- Mobile Search Button -->
+                    <button id="mobileSearchBtn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 active:bg-white/10 transition-all touch-manipulation">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                    
+                    <!-- Desktop Search -->
                     <div class="relative hidden md:block">
-                        <input type="search" 
-                               class="w-72 px-4 py-2 rounded-full bg-gray-900 border border-gray-700 focus:border-indigo-500 focus:outline-none"
-                               placeholder="Search for videos...">
-                        <i class="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <div class="relative">
+                            <input type="search" 
+                                   id="searchInput"
+                                   class="search-input w-64 lg:w-80 px-5 py-2.5 pl-12 rounded-full focus:outline-none"
+                                   placeholder="Search for videos..."
+                                   autocomplete="off"
+                                   style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #ffffff;">
+                            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <div class="search-dropdown" id="searchDropdown">
+                                <div class="p-4">
+                                    <div class="text-gray-400 text-sm">Start typing to search...</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="flex items-center space-x-4">
-                        <button class="px-6 py-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
-                            <a href="/sign-in">Sign In</a>
-                        </button>
-                        <button class="px-6 py-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 transition-colors">
-                            <a href="/get-started">Get Started</a>
-                        </button>
+                    <!-- Mobile Menu Button -->
+                    <button id="mobileMenuBtn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 active:bg-white/10 transition-all touch-manipulation" aria-label="Open menu">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    
+                    <div class="hidden md:flex items-center space-x-3">
+                        <a href="/sign-in" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all font-medium text-sm lg:text-base min-h-[44px] flex items-center">
+                            Sign In
+                        </a>
+                        <a href="/get-started" class="btn-primary px-6 py-2.5 rounded-full text-white font-semibold text-sm lg:text-base relative z-10 min-h-[44px] flex items-center">
+                            <span class="relative z-10">Get Started</span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
+        
+        <!-- Mobile Menu Backdrop -->
+        <div id="mobileMenuBackdrop" class="mobile-menu-backdrop"></div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu md:hidden fixed inset-y-0 right-0 bg-gray-900/95 backdrop-blur-xl z-50 p-6 overflow-y-auto">
+            <div class="flex items-center justify-between mb-8">
+                <span class="text-xl font-bold">Menu</span>
+                <button id="closeMobileMenu" class="w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <nav class="space-y-2">
+                <a href="/browse" class="block px-4 py-3.5 rounded-lg bg-white/5 active:bg-white/10 transition-all min-h-[44px] flex items-center touch-manipulation">Browse</a>
+                <a href="/categories" class="block px-4 py-3.5 rounded-lg bg-white/5 active:bg-white/10 transition-all min-h-[44px] flex items-center touch-manipulation">Categories</a>
+                <a href="/live" class="block px-4 py-3.5 rounded-lg bg-white/5 active:bg-white/10 transition-all min-h-[44px] flex items-center touch-manipulation">Live</a>
+                <a href="/trending" class="block px-4 py-3.5 rounded-lg bg-white/5 active:bg-white/10 transition-all min-h-[44px] flex items-center touch-manipulation">Trending</a>
+                <div class="pt-4 border-t border-white/10 space-y-3">
+                    <a href="/sign-in" class="block px-4 py-3.5 rounded-lg bg-white/5 active:bg-white/10 transition-all text-center min-h-[44px] flex items-center justify-center touch-manipulation">Sign In</a>
+                    <a href="/get-started" class="block px-4 py-3.5 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 active:from-indigo-600 active:to-purple-600 transition-all text-center font-semibold min-h-[44px] flex items-center justify-center touch-manipulation">Get Started</a>
+                </div>
+            </nav>
+            
+            <!-- Mobile Search (shown when search button clicked) -->
+            <div id="mobileSearch" class="mt-6 hidden">
+                <input type="search" 
+                       id="mobileSearchInput"
+                       class="w-full px-4 py-3 pl-12 rounded-xl focus:outline-none"
+                       placeholder="Search for videos..."
+                       autocomplete="off"
+                       style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #ffffff; min-height: 44px;">
+                <i class="fas fa-search absolute left-8 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+        </div>
+            </div>
+        </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-gradient min-h-screen flex items-center pt-20 px-6">
-        <div class="container mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-8">
-                    <h1 class="text-5xl lg:text-7xl font-bold leading-tight">
-                        Stream Your Favorite
-                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
-                            Content
-                        </span>
-                    </h1>
-                    <p class="text-xl text-gray-300 max-w-xl">
-                        Access thousands of premium videos, exclusive content, and live streams. Join our community of millions.
-                    </p>
-                    <div class="flex items-center space-x-6">
-                        <button class="px-8 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 transition-colors text-lg font-semibold">
-                            <a href="/get-started">Start Watching</a>
-                        </button>
-                        <button class="px-8 py-3 rounded-full border border-gray-700 hover:border-indigo-500 transition-colors text-lg font-semibold">
-                            <a href="/learn-more">Learn More</a>
-                        </button>
+    <!-- Hero Section with Featured Video -->
+    <section class="hero-gradient min-h-screen flex items-center pt-24 pb-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div class="container mx-auto max-w-7xl">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                <div class="space-y-8 z-10">
+                    <div class="space-y-4">
+                        <div class="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-4">
+                            <div class="live-dot"></div>
+                            <span class="text-sm font-semibold">Live Streaming Now</span>
+                        </div>
+                        <h1 class="text-4xl sm:text-5xl lg:text-7xl font-black leading-tight">
+                            Watch, Stream & 
+                            <span class="block bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                                Experience
+                            </span>
+                            Premium Content
+                        </h1>
+                        <p class="text-lg sm:text-xl text-gray-300 max-w-xl leading-relaxed">
+                            Join millions of viewers enjoying thousands of premium videos, exclusive content, and live streams. Start watching instantly!
+                        </p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                        <a href="/browse" class="watch-now-btn btn-primary px-6 sm:px-8 py-3.5 sm:py-4 rounded-full text-white font-bold text-base sm:text-lg relative z-10 flex items-center justify-center space-x-2 min-h-[48px] touch-manipulation">
+                            <i class="fas fa-play"></i>
+                            <span class="relative z-10">Start Watching Now</span>
+                        </a>
+                        <a href="/live" class="btn-secondary px-6 sm:px-8 py-3.5 sm:py-4 rounded-full text-white font-semibold text-base sm:text-lg flex items-center justify-center space-x-2 min-h-[48px] touch-manipulation">
+                            <div class="live-dot"></div>
+                            <span>Watch Live</span>
+                        </a>
+                    </div>
+                    <div class="flex items-center space-x-8 pt-4">
+                        <div class="observe-fade">
+                            <div class="counter text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400" data-target="10000000">0</div>
+                            <div class="text-sm text-gray-400">Active Viewers</div>
+                        </div>
+                        <div class="observe-fade fade-in-up-delay-1">
+                            <div class="counter text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400" data-target="50000">0</div>
+                            <div class="text-sm text-gray-400">Premium Videos</div>
+                        </div>
+                        <div class="observe-fade fade-in-up-delay-2">
+                            <div class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-red-400">24/7</div>
+                            <div class="text-sm text-gray-400">Live Streaming</div>
+                        </div>
                     </div>
                 </div>
-                <div class="hidden lg:block animate-float">
-                    <!-- Placeholder for hero image or video preview -->
-                    <div class="rounded-2xl overflow-hidden premium-glow">
-                        <video 
-                            class="w-full h-full object-cover"
-                            poster="/path/to/poster.jpg"
-                            muted
-                            loop>
-                            <source src="{{ featured_video.url }}" type="video/mp4">
-                        </video>
+                <div class="hidden lg:block animate-float relative z-10">
+                    {% if featured_videos|length > 0 %}
+                    <div class="hero-video-preview relative">
+                        <div class="aspect-video bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+                            <div class="absolute inset-0 flex items-center justify-center z-10">
+                                <button class="w-24 h-24 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-4 border-white/30 transform hover:scale-110 transition-transform cursor-pointer group">
+                                    <i class="fas fa-play text-white text-3xl ml-1 group-hover:scale-110 transition-transform"></i>
+                                </button>
+                            </div>
+                            <div class="absolute bottom-0 left-0 right-0 p-6 z-10">
+                                <h3 class="text-xl font-bold mb-2">{{ featured_videos.0.title }}</h3>
+                                <p class="text-sm text-gray-300 line-clamp-2">{{ featured_videos.0.description|truncatewords:15 }}</p>
+                            </div>
+                        </div>
                     </div>
+                    {% else %}
+                    <div class="hero-video-preview relative">
+                        <div class="aspect-video bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+                            <div class="absolute inset-0 flex items-center justify-center z-10">
+                                <button class="w-24 h-24 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-4 border-white/30 transform hover:scale-110 transition-transform cursor-pointer group">
+                                    <i class="fas fa-play text-white text-3xl ml-1 group-hover:scale-110 transition-transform"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Featured Categories -->
-    <section class="py-20 px-6">
-        <div class="container mx-auto">
-            <h2 class="text-3xl font-bold mb-12">Popular Categories</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {% for category in categories %}
-                <div class="category-card glass-effect rounded-xl p-6 text-center">
-                    <i class="{{ category.icon }} text-4xl mb-4 text-indigo-500"></i>
-                    <h3 class="text-xl font-semibold mb-2">{{ category.name }}</h3>
-                    <p class="text-gray-400">{{ category.video_count }} videos</p>
+    <!-- Live Streams Section -->
+    {% if live_streams|length > 0 %}
+    <section class="py-12 lg:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-red-900/10 to-transparent">
+        <div class="container mx-auto max-w-7xl">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center space-x-4">
+                    <div class="live-dot"></div>
+                    <h2 class="text-3xl lg:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-pink-400">
+                        Live Now
+                    </h2>
+                </div>
+                <a href="/live" class="text-indigo-400 hover:text-indigo-300 font-semibold flex items-center space-x-2">
+                    <span>View All</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for stream in live_streams %}
+                <div class="glass-effect rounded-2xl overflow-hidden group cursor-pointer hover:scale-105 transition-transform">
+                    <div class="relative aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                        <i class="fas fa-video text-5xl text-gray-600"></i>
+                        <div class="absolute top-3 left-3">
+                            <span class="live-badge px-3 py-1 rounded-full text-xs font-bold text-white flex items-center space-x-2">
+                                <div class="live-dot"></div>
+                                <span>LIVE</span>
+                            </span>
+                        </div>
+                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
+                            <h3 class="text-lg font-bold mb-1">{{ stream.title }}</h3>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-400">{{ stream.category }}</span>
+                                <span class="text-xs text-gray-400 flex items-center space-x-1">
+                                    <i class="fas fa-eye"></i>
+                                    <span>{{ stream.viewers }} watching</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
         </div>
     </section>
+    {% endif %}
 
-    <!-- Video Grid -->
-    <section class="py-20 px-6 bg-gray-900">
-        <div class="container mx-auto">
-            <div class="flex justify-between items-center mb-12">
-                <h2 class="text-3xl font-bold">Trending Now</h2>
-                <div class="flex space-x-4">
-                    <button class="p-2 rounded-full bg-gray-800 hover:bg-gray-700">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="p-2 rounded-full bg-gray-800 hover:bg-gray-700">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
+    <!-- Featured Videos - Start Watching Section -->
+    <section class="py-20 lg:py-28 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto max-w-7xl">
+            <div class="text-center mb-12 lg:mb-16 observe-fade">
+                <h2 class="section-title text-3xl lg:text-5xl font-black mb-4">
+                    Start Watching Now
+                </h2>
+                <p class="text-gray-400 text-xl max-w-2xl mx-auto">
+                    Discover our handpicked collection of premium videos. Watch instantly, stream anywhere.
+                </p>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {% for video in videos %}
-                <article class="video-card rounded-xl overflow-hidden">
-                    <div class="video-card-inner">
-                        <div class="card-front relative">
-                            <div class="aspect-w-16 aspect-h-9">
-                                <video 
-                                    class="object-cover w-full h-full"
-                                    poster="{{ video.thumbnail }}"
-                                    preload="none"
-                                    muted>
-                                    <source data-src="{{ video.preview_url }}" type="video/mp4">
-                                </video>
-                            </div>
-                            <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent p-4 flex flex-col justify-end">
-                                <h3 class="text-lg font-semibold mb-2">{{ video.title }}</h3>
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-sm">{{ video.views }} views</span>
-                                        <span class="text-sm">{{ video.duration }}</span>
-                                    </div>
-                                    {% if video.is_premium %}
-                                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-yellow-400 to-yellow-600">
-                                        PREMIUM
-                                    </span>
-                                    {% endif %}
-                                </div>
+            {% if featured_videos|length > 0 %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-12">
+                {% for video in featured_videos %}
+                <article class="video-card glass-effect rounded-2xl overflow-hidden group observe-fade" data-video-src="{% if video.file %}{{ video.file.url }}{% endif %}">
+                    <div class="relative aspect-video overflow-hidden">
+                        <div class="video-thumbnail w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                            {% if video.thumbnail %}
+                            <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover">
+                            {% else %}
+                            <i class="fas fa-video text-5xl text-gray-600"></i>
+                            {% endif %}
+                        </div>
+                        <div class="play-overlay">
+                            <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-2 border-white/30">
+                                <i class="fas fa-play text-white text-xl ml-1"></i>
                             </div>
                         </div>
-                        
-                        <div class="card-back absolute inset-0 bg-gray-800 p-4">
-                            <div class="h-full flex flex-col justify-between">
-                                <div>
-                                    <h3 class="text-lg font-semibold mb-2">{{ video.title }}</h3>
-                                    <p class="text-gray-400">{{ video.description }}</p>
-                                </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col justify-end">
+                            <h3 class="text-lg font-bold mb-2 line-clamp-2">{{ video.title }}</h3>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-400">{{ video.uploaded_at|date:"M d, Y" }}</span>
                                 {% if video.is_premium %}
-                                <button class="w-full py-3 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 transition-colors">
-                                    Watch Premium
-                                </button>
-                                {% else %}
-                                <button class="w-full py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors">
-                                    Watch Now
-                                </button>
+                                <span class="premium-badge px-3 py-1 rounded-full text-xs font-bold text-white">
+                                    PREMIUM
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            <div class="text-center">
+                <a href="/browse" class="btn-primary inline-flex items-center space-x-2 px-8 py-4 rounded-full text-white font-bold text-lg">
+                    <span>Browse All Videos</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            {% else %}
+            <div class="text-center py-20">
+                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-video text-5xl text-gray-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Ready to Start Streaming</h3>
+                <p class="text-gray-400 mb-8">Upload your first video and start sharing with the world!</p>
+                <a href="/browse" class="btn-primary inline-flex items-center space-x-2 px-8 py-4 rounded-full text-white font-bold text-lg">
+                    <span>Explore Videos</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Popular Categories -->
+    <section class="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-gray-900/50 to-transparent">
+        <div class="container mx-auto max-w-7xl">
+            <div class="text-center mb-12 lg:mb-16 observe-fade">
+                <h2 class="section-title text-3xl lg:text-4xl font-bold mb-4">Explore by Category</h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">Find exactly what you're looking for</p>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                {% for category in categories %}
+                <a href="/categories" class="category-card glass-effect rounded-2xl p-6 lg:p-8 text-center relative z-10 observe-fade">
+                    <div class="icon mb-4">
+                        <i class="{{ category.icon }} text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-br {{ category.color }}"></i>
+                    </div>
+                    <h3 class="text-lg lg:text-xl font-bold mb-2 relative z-10">{{ category.name }}</h3>
+                    <p class="text-gray-400 text-sm relative z-10">{{ category.video_count }} videos</p>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Videos -->
+    {% if trending_videos|length > 0 %}
+    <section class="py-20 lg:py-28 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto max-w-7xl">
+            <div class="flex items-center justify-between mb-12 lg:mb-16">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i class="fas fa-fire text-3xl bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-orange-400"></i>
+                        <h2 class="section-title text-3xl lg:text-4xl font-bold">Trending Now</h2>
+                    </div>
+                    <p class="text-gray-400 text-lg">What everyone is watching right now</p>
+                </div>
+                <a href="/trending" class="text-indigo-400 hover:text-indigo-300 font-semibold flex items-center space-x-2">
+                    <span>View All</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+                {% for video in trending_videos %}
+                <article class="video-card glass-effect rounded-2xl overflow-hidden group">
+                    <div class="relative aspect-video overflow-hidden">
+                        <div class="video-thumbnail w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                            {% if video.thumbnail %}
+                            <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover">
+                            {% else %}
+                            <i class="fas fa-video text-5xl text-gray-600"></i>
+                            {% endif %}
+                        </div>
+                        <div class="play-overlay">
+                            <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-2 border-white/30">
+                                <i class="fas fa-play text-white text-xl ml-1"></i>
+                            </div>
+                        </div>
+                        <div class="absolute top-3 left-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-red-500 to-orange-500 text-white flex items-center space-x-1">
+                                <i class="fas fa-fire text-xs"></i>
+                                <span>TRENDING</span>
+                            </span>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col justify-end">
+                            <h3 class="text-lg font-bold mb-2 line-clamp-2">{{ video.title }}</h3>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-400">{{ video.uploaded_at|date:"M d, Y" }}</span>
+                                {% if video.is_premium %}
+                                <span class="premium-badge px-3 py-1 rounded-full text-xs font-bold text-white">
+                                    PREMIUM
+                                </span>
                                 {% endif %}
                             </div>
                         </div>
@@ -267,49 +1122,509 @@
             </div>
         </div>
     </section>
+    {% endif %}
 
-    <!-- Premium Section -->
-    <section class="py-20 px-6">
-        <div class="container mx-auto">
-            <div class="glass-effect rounded-2xl p-12 text-center">
-                <h2 class="text-4xl font-bold mb-6">Upgrade to Premium</h2>
-                <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                    Get access to exclusive content, ad-free viewing, and premium features.
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                    {% for plan in premium_plans %}
-                    <div class="glass-effect rounded-xl p-6 {% if plan.recommended %}premium-glow{% endif %}">
-                        <h3 class="text-xl font-semibold mb-4">{{ plan.name }}</h3>
-                        <div class="text-3xl font-bold mb-4">${{ plan.price }}<span class="text-lg">/mo</span></div>
-                        <ul class="text-left space-y-3 mb-6">
-                            {% for feature in plan.features %}
-                            <li class="flex items-center">
-                                <i class="fas fa-check text-green-500 mr-2"></i>
-                                {{ feature }}
-                            </li>
-                            {% endfor %}
-                        </ul>
-                        <button class="w-full py-3 rounded-lg {% if plan.recommended %}bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600{% else %}bg-gray-700 hover:bg-gray-600{% endif %} transition-colors">
-                            Select Plan
-                        </button>
+    <!-- Why Choose Us Section -->
+    <section class="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent via-indigo-900/10 to-transparent">
+        <div class="container mx-auto max-w-7xl">
+            <div class="text-center mb-12 lg:mb-16 observe-fade">
+                <h2 class="section-title text-3xl lg:text-4xl font-bold mb-4">Why Choose Orv Hub?</h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">Experience the best in video streaming</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                <div class="feature-card glass-effect rounded-2xl p-8 text-center observe-fade">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-hd-video text-3xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400"></i>
                     </div>
-                    {% endfor %}
+                    <h3 class="text-xl font-bold mb-3">4K Quality</h3>
+                    <p class="text-gray-400">Watch in stunning 4K Ultra HD quality for the best viewing experience</p>
+                </div>
+                <div class="feature-card glass-effect rounded-2xl p-8 text-center observe-fade fade-in-up-delay-1">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-broadcast-tower text-3xl bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Live Streaming</h3>
+                    <p class="text-gray-400">Join live events and streams in real-time, anytime, anywhere</p>
+                </div>
+                <div class="feature-card glass-effect rounded-2xl p-8 text-center observe-fade fade-in-up-delay-2">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-500/20 to-red-500/20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-mobile-alt text-3xl bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-red-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Watch Anywhere</h3>
+                    <p class="text-gray-400">Stream on any device - phone, tablet, TV, or computer</p>
+                </div>
+                <div class="feature-card glass-effect rounded-2xl p-8 text-center observe-fade fade-in-up-delay-3">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-ban text-3xl bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Ad-Free</h3>
+                    <p class="text-gray-400">Enjoy uninterrupted viewing with our premium ad-free experience</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-20 lg:py-28 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto max-w-7xl">
+            <div class="text-center mb-12 lg:mb-16">
+                <h2 class="section-title text-3xl lg:text-4xl font-bold mb-4">What Our Viewers Say</h2>
+                <p class="text-gray-400 text-lg">Join thousands of satisfied users</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                <div class="testimonial-card glass-effect rounded-2xl p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                            JD
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-bold">John Doe</h4>
+                            <p class="text-sm text-gray-400">Premium Member</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">"Best streaming platform I've ever used! The video quality is amazing and the live streams are incredible."</p>
+                </div>
+                <div class="testimonial-card glass-effect rounded-2xl p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-white font-bold">
+                            SM
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-bold">Sarah Miller</h4>
+                            <p class="text-sm text-gray-400">Ultimate Member</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">"I love the variety of content and the seamless streaming experience. Highly recommended!"</p>
+                </div>
+                <div class="testimonial-card glass-effect rounded-2xl p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center text-white font-bold">
+                            MJ
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="font-bold">Mike Johnson</h4>
+                            <p class="text-sm text-gray-400">Premium Member</p>
+                        </div>
+                    </div>
+                    <div class="flex mb-4">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                    <p class="text-gray-300 leading-relaxed">"The live streaming feature is fantastic! I watch live events every week. Worth every penny!"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Premium Plans -->
+    <section id="premium" class="py-20 lg:py-28 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto max-w-7xl">
+            <div class="glass-effect rounded-3xl p-8 lg:p-16 text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10"></div>
+                <div class="relative z-10">
+                    <h2 class="text-4xl lg:text-5xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-pink-400">
+                        Upgrade to Premium
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+                        Get access to exclusive content, ad-free viewing, and premium features.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
+                        {% for plan in premium_plans %}
+                        <div class="plan-card glass-effect rounded-2xl p-8 {% if plan.recommended %}featured{% endif %} relative z-10">
+                            <div class="mb-6">
+                                <h3 class="text-2xl font-bold mb-2">{{ plan.name }}</h3>
+                                <div class="text-4xl lg:text-5xl font-black mb-2 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                                    ${{ plan.price }}<span class="text-lg text-gray-400">/mo</span>
+                                </div>
+                            </div>
+                            <ul class="text-left space-y-4 mb-8">
+                                {% for feature in plan.features %}
+                                <li class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-400 mr-3 text-lg"></i>
+                                    <span class="text-gray-300">{{ feature }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <button class="w-full py-4 rounded-xl font-bold text-lg transition-all {% if plan.recommended %}btn-primary{% else %}bg-white/5 hover:bg-white/10 border border-white/10{% endif %}">
+                                Select Plan
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="cta-section py-20 lg:py-28 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto max-w-4xl text-center">
+            <div class="glass-effect rounded-3xl p-12 lg:p-16">
+                <h2 class="text-4xl lg:text-5xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                    Ready to Start Streaming?
+                </h2>
+                <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                    Join millions of viewers and start watching premium content today. No credit card required to start.
+                </p>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <a href="/get-started" class="btn-primary px-10 py-5 rounded-full text-white font-bold text-lg relative z-10">
+                        <span class="relative z-10">Get Started Free</span>
+                    </a>
+                    <a href="/browse" class="btn-secondary px-10 py-5 rounded-full text-white font-semibold text-lg">
+                        Browse Videos
+                    </a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 py-12 px-6">
-        <div class="container mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+    <footer class="bg-gray-900/50 py-12 lg:py-16 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+        <div class="container mx-auto max-w-7xl">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
                 <div>
-                    <h4 class="text-xl font-semibold mb-6">About Orv Hub</h4>
-                    <p class="text-gray-400">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                            <i class="fas fa-play text-white"></i>
+                        </div>
+                        <span class="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                            Orv Hub
+                        </span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
                         A premium video streaming platform offering the best content for our users.
                     </p>
                 </div>
                 <div>
-                    <h4 class="text-xl font-semibold mb-6">Quick Links</h4>
+                    <h4 class="text-lg font-bold mb-6">Quick Links</h4>
                     <ul class="space-y-3 text-gray-400">
                         <li><a href="/about" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="/contact" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="/privacy" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="/terms" class="hover:text-white transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Content</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="/browse" class="hover:text-white transition-colors">Browse Videos</a></li>
+                        <li><a href="/categories" class="hover:text-white transition-colors">Categories</a></li>
+                        <li><a href="/live" class="hover:text-white transition-colors">Live Streams</a></li>
+                        <li><a href="/trending" class="hover:text-white transition-colors">Trending</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all hover:scale-110">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all hover:scale-110">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all hover:scale-110">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all hover:scale-110">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/10 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 Orv Hub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="video-modal items-center justify-center p-4">
+        <div class="relative max-w-6xl w-full">
+            <button id="closeModal" class="absolute -top-12 right-0 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <div class="aspect-video bg-black rounded-2xl overflow-hidden">
+                <video id="modalVideo" class="w-full h-full" controls></video>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navbar scroll effect and progress bar
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const scrollProgress = document.getElementById('scrollProgress');
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            
+            if (scrollTop > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            scrollProgress.style.transform = `scaleX(${scrollPercent / 100})`;
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBackdrop = document.getElementById('mobileMenuBackdrop');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+        const mobileSearchBtn = document.getElementById('mobileSearchBtn');
+        const mobileSearch = document.getElementById('mobileSearch');
+        const mobileSearchInput = document.getElementById('mobileSearchInput');
+        
+        function openMobileMenu() {
+            mobileMenu.classList.add('open');
+            mobileMenuBackdrop.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenuFunc() {
+            mobileMenu.classList.remove('open');
+            mobileMenuBackdrop.classList.remove('active');
+            document.body.style.overflow = '';
+            if (mobileSearch) {
+                mobileSearch.classList.add('hidden');
+            }
+        }
+        
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', openMobileMenu);
+        }
+        
+        if (closeMobileMenu) {
+            closeMobileMenu.addEventListener('click', closeMobileMenuFunc);
+        }
+
+        // Close mobile menu when clicking backdrop
+        if (mobileMenuBackdrop) {
+            mobileMenuBackdrop.addEventListener('click', closeMobileMenuFunc);
+        }
+
+        // Close mobile menu when clicking outside
+        if (mobileMenu) {
+            mobileMenu.addEventListener('click', (e) => {
+                if (e.target === mobileMenu) {
+                    closeMobileMenuFunc();
+                }
+            });
+        }
+
+        // Mobile search toggle
+        if (mobileSearchBtn && mobileSearch) {
+            mobileSearchBtn.addEventListener('click', () => {
+                mobileSearch.classList.toggle('hidden');
+                if (!mobileSearch.classList.contains('hidden') && mobileSearchInput) {
+                    setTimeout(() => mobileSearchInput.focus(), 100);
+                }
+            });
+        }
+
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+                closeMobileMenuFunc();
+            }
+        });
+
+        // Swipe to close mobile menu
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        if (mobileMenu) {
+            mobileMenu.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+            
+            mobileMenu.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, { passive: true });
+        }
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            if (touchEndX < touchStartX - swipeThreshold) {
+                // Swipe left - close menu
+                closeMobileMenuFunc();
+            }
+        }
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchDropdown = document.getElementById('searchDropdown');
+        
+        if (searchInput) {
+            let searchTimeout;
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                
+                if (query.length > 0) {
+                    searchTimeout = setTimeout(() => {
+                        // Simulate search (replace with actual API call)
+                        searchDropdown.innerHTML = `
+                            <div class="p-4">
+                                <div class="text-gray-400 text-sm mb-2">Searching for "${query}"...</div>
+                                <div class="space-y-2">
+                                    <div class="p-3 rounded-lg bg-white/5 hover:bg-white/10 cursor-pointer">
+                                        <div class="font-semibold">Video Result 1</div>
+                                        <div class="text-sm text-gray-400">Matching video title</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        searchDropdown.classList.add('active');
+                    }, 300);
+                } else {
+                    searchDropdown.classList.remove('active');
+                }
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                    searchDropdown.classList.remove('active');
+                }
+            });
+        }
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all elements with observe-fade class
+        document.querySelectorAll('.observe-fade').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Video Modal
+        const videoModal = document.getElementById('videoModal');
+        const modalVideo = document.getElementById('modalVideo');
+        const closeModal = document.getElementById('closeModal');
+        
+        document.querySelectorAll('.video-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const videoSrc = this.dataset.videoSrc;
+                if (videoSrc) {
+                    modalVideo.src = videoSrc;
+                    videoModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        });
+        
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                videoModal.classList.remove('active');
+                modalVideo.pause();
+                modalVideo.src = '';
+                document.body.style.overflow = '';
+            });
+        }
+        
+        videoModal.addEventListener('click', (e) => {
+            if (e.target === videoModal) {
+                videoModal.classList.remove('active');
+                modalVideo.pause();
+                modalVideo.src = '';
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Number counter animation
+        function animateCounter(element, target, duration = 2000) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = target.toLocaleString() + '+';
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start).toLocaleString() + '+';
+                }
+            }, 16);
+        }
+
+        // Animate counters when they come into view
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.dataset.target);
+                    animateCounter(entry.target, target);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.counter').forEach(counter => {
+            counterObserver.observe(counter);
+        });
+
+        // Lazy load images
+        if ('loading' in HTMLImageElement.prototype) {
+            const images = document.querySelectorAll('img[loading="lazy"]');
+            images.forEach(img => {
+                img.src = img.dataset.src || img.src;
+            });
+        } else {
+            // Fallback for browsers that don't support lazy loading
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
+            document.body.appendChild(script);
+        }
+
+        // Performance: Preload critical resources
+        const preloadLink = document.createElement('link');
+        preloadLink.rel = 'preload';
+        preloadLink.as = 'style';
+        preloadLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap';
+        document.head.appendChild(preloadLink);
+    </script>
+</body>
+</html>
