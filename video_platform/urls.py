@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from videos import views
+from videos import views as video_views
+from accounts import views as account_views
 
 # ----------------------------------
 # Main URL Patterns
@@ -10,7 +11,7 @@ from videos import views
 
 urlpatterns = [
     # Home Page
-    path('', views.index, name='home'),  # مسیر صفحه اصلی برای نمایش `index.html`
+    path('', video_views.index, name='home'),  # مسیر صفحه اصلی برای نمایش `index.html`
 
     # Admin Panel
     path('admin/', admin.site.urls),  # مسیر پنل مدیریت
@@ -23,6 +24,9 @@ urlpatterns = [
 
     # Videos
     path('videos/', include('videos.urls')),  # مسیر مدیریت ویدیوها و صفحات مرتبط
+    path('browse/', video_views.browse, name='browse'),
+    path('trending/', video_views.trending, name='trending'),
+    path('live/', video_views.live, name='live'),
 
     # Categories
     path('categories/', include('categories.urls')),  # مسیر دسته‌بندی ویدیوها
@@ -35,6 +39,11 @@ urlpatterns = [
 
     # Analytics
     path('analytics/', include('analytics.urls')),  # مسیر نمایش آمار و تحلیل‌ها
+    
+    # Additional pages
+    path('sign-in/', account_views.sign_in_view, name='sign_in'),
+    path('sign-up/', account_views.sign_up_view, name='sign_up'),
+    path('get-started/', video_views.get_started, name='get_started'),
 ]
 
 # ----------------------------------

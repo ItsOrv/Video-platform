@@ -2,31 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="description" content="Orv Hub - Sign Up">
-    <title>Orv Hub - Sign Up</title>
+    <title>Sign Up - Orv Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            --hover-gradient: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-            --glass-bg: rgba(255, 255, 255, 0.1);
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             overflow-x: hidden;
             color: #ffffff;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Video background */
         .video-bg {
             position: fixed;
             top: 0;
@@ -34,42 +39,178 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            z-index: -2;
+            filter: blur(20px) brightness(0.4);
+            transform: scale(1.1);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.2) 0%, transparent 50%);
             z-index: -1;
-            filter: blur(15px) brightness(0.6);
         }
 
         .glass-effect {
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
         }
 
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+        .form-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #4f46e5;
-            border-radius: 3px;
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input.error {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+        }
+
+        .form-input.success {
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .checkbox-custom {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .checkbox-custom:checked {
+            background: var(--primary-gradient);
+            border-color: transparent;
+        }
+
+        .checkbox-custom:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .password-strength {
+            height: 4px;
+            border-radius: 2px;
+            margin-top: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .password-strength.weak {
+            width: 33%;
+            background: #ef4444;
+        }
+
+        .password-strength.medium {
+            width: 66%;
+            background: #f59e0b;
+        }
+
+        .password-strength.strong {
+            width: 100%;
+            background: #10b981;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
         }
     </style>
 </head>
-<body class="custom-scroll">
+<body>
     <!-- Video Background -->
-    <video class="video-bg" autoplay loop muted>
-        <source src="background.mp4" type="video/mp4">
-        Your browser does not support the video tag.
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="/static/background.mp4" type="video/mp4">
     </video>
+    <div class="overlay"></div>
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 glass-effect">
-        <div class="container mx-auto px-6 py-4">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex items-center justify-between">
-                <a href="/" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
-                    Orv Hub
+                <a href="/" class="flex items-center space-x-2 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-play text-white text-lg"></i>
+                    </div>
+                    <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                        Orv Hub
+                    </span>
                 </a>
-                <a href="/sign-in" class="px-6 py-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+                <a href="/sign-in" class="px-6 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all font-medium">
                     Sign In
                 </a>
             </div>
@@ -77,51 +218,269 @@
     </nav>
 
     <!-- Sign Up Section -->
-    <section class="min-h-screen flex items-center justify-center px-6">
-        <div class="glass-effect rounded-2xl shadow-lg p-8 max-w-lg w-full">
-            <h1 class="text-4xl font-bold text-center mb-6">
-                Join 
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">Orv Hub</span>
-            </h1>
-            <p class="text-gray-400 text-center mb-8">
-                Create your account to explore premium content and features.
-            </p>
-            <form action="/sign-up" method="POST" class="space-y-6">
-                <div>
-                    <label for="username" class="block text-gray-400 mb-2">Username</label>
-                    <input type="text" id="username" name="username" required 
-                        class="w-full px-4 py-2 rounded-full bg-gray-900 border border-gray-700 focus:border-indigo-500 focus:outline-none">
+    <section class="min-h-screen flex items-center justify-center px-4 sm:px-6 py-20">
+        <div class="glass-effect rounded-3xl shadow-2xl p-8 sm:p-10 lg:p-12 max-w-lg w-full animate-slide-in">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user-plus text-white text-2xl"></i>
                 </div>
+                <h1 class="text-3xl sm:text-4xl font-black mb-3">
+                    Join <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">Orv Hub</span>
+                </h1>
+                <p class="text-gray-400 text-lg">
+                    Create your account to explore premium content and features
+                </p>
+            </div>
+
+            <form action="/sign-up/" method="POST" class="space-y-5" id="signupForm">
+                {% csrf_token %}
+                
                 <div>
-                    <label for="email" class="block text-gray-400 mb-2">Email Address</label>
-                    <input type="email" id="email" name="email" required 
-                        class="w-full px-4 py-2 rounded-full bg-gray-900 border border-gray-700 focus:border-indigo-500 focus:outline-none">
+                    <label for="username" class="block text-sm font-semibold text-gray-300 mb-2">
+                        Username
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-500"></i>
+                        </div>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            required 
+                            class="form-input w-full pl-12 pr-4 py-3.5 rounded-xl text-white placeholder-gray-500 focus:outline-none"
+                            placeholder="johndoe"
+                            autocomplete="username"
+                            minlength="3"
+                        >
+                    </div>
+                    <div class="error-message" id="usernameError"></div>
                 </div>
+
                 <div>
-                    <label for="password" class="block text-gray-400 mb-2">Password</label>
-                    <input type="password" id="password" name="password" required 
-                        class="w-full px-4 py-2 rounded-full bg-gray-900 border border-gray-700 focus:border-indigo-500 focus:outline-none">
+                    <label for="email" class="block text-sm font-semibold text-gray-300 mb-2">
+                        Email Address
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-500"></i>
+                        </div>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required 
+                            class="form-input w-full pl-12 pr-4 py-3.5 rounded-xl text-white placeholder-gray-500 focus:outline-none"
+                            placeholder="your@email.com"
+                            autocomplete="email"
+                        >
+                    </div>
+                    <div class="error-message" id="emailError"></div>
                 </div>
+
                 <div>
-                    <label for="confirm-password" class="block text-gray-400 mb-2">Confirm Password</label>
-                    <input type="password" id="confirm-password" name="confirm_password" required 
-                        class="w-full px-4 py-2 rounded-full bg-gray-900 border border-gray-700 focus:border-indigo-500 focus:outline-none">
+                    <label for="password" class="block text-sm font-semibold text-gray-300 mb-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-500"></i>
+                        </div>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required 
+                            class="form-input w-full pl-12 pr-12 py-3.5 rounded-xl text-white placeholder-gray-500 focus:outline-none"
+                            placeholder="••••••••"
+                            autocomplete="new-password"
+                            minlength="8"
+                            oninput="checkPasswordStrength()"
+                        >
+                        <button type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center" onclick="togglePassword('password')">
+                            <i class="fas fa-eye text-gray-500 hover:text-gray-300 cursor-pointer" id="toggleIcon1"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength" id="passwordStrength"></div>
+                    <div class="error-message" id="passwordError"></div>
                 </div>
-                <div class="flex items-center">
-                    <label class="flex items-center text-gray-400">
-                        <input type="checkbox" class="form-checkbox text-indigo-500" required>
-                        <span class="ml-2">I agree to the <a href="/terms" class="text-indigo-500 hover:text-indigo-400">Terms and Conditions</a></span>
+
+                <div>
+                    <label for="confirm-password" class="block text-sm font-semibold text-gray-300 mb-2">
+                        Confirm Password
+                    </label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-500"></i>
+                        </div>
+                        <input 
+                            type="password" 
+                            id="confirm-password" 
+                            name="confirm_password" 
+                            required 
+                            class="form-input w-full pl-12 pr-12 py-3.5 rounded-xl text-white placeholder-gray-500 focus:outline-none"
+                            placeholder="••••••••"
+                            autocomplete="new-password"
+                            oninput="checkPasswordMatch()"
+                        >
+                        <button type="button" class="absolute inset-y-0 right-0 pr-4 flex items-center" onclick="togglePassword('confirm-password')">
+                            <i class="fas fa-eye text-gray-500 hover:text-gray-300 cursor-pointer" id="toggleIcon2"></i>
+                        </button>
+                    </div>
+                    <div class="error-message" id="confirmPasswordError"></div>
+                </div>
+
+                <div class="flex items-start">
+                    <input type="checkbox" id="terms" class="checkbox-custom mr-3 mt-1" required>
+                    <label for="terms" class="text-sm text-gray-300 cursor-pointer">
+                        I agree to the 
+                        <a href="/terms" class="font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 hover:from-indigo-300 hover:to-purple-300 transition-all">
+                            Terms and Conditions
+                        </a>
                     </label>
                 </div>
-                <button type="submit" class="w-full py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-lg font-semibold transition-colors">
-                    Sign Up
+
+                <button type="submit" class="btn-primary w-full py-4 rounded-xl text-white font-bold text-lg relative">
+                    <span class="relative z-10">Create Account</span>
                 </button>
             </form>
-            <p class="text-center text-gray-400 mt-8">
-                Already have an account? 
-                <a href="/sign-in" class="text-indigo-500 hover:text-indigo-400">Sign In</a>
-            </p>
+
+            <div class="mt-8 pt-8 border-t border-white/10">
+                <p class="text-center text-gray-400">
+                    Already have an account? 
+                    <a href="/sign-in" class="font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 hover:from-indigo-300 hover:to-purple-300 transition-all">
+                        Sign In
+                    </a>
+                </p>
+            </div>
+
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-white/10"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-transparent text-gray-400">Or sign up with</span>
+                    </div>
+                </div>
+                <div class="mt-6 grid grid-cols-3 gap-4">
+                    <button class="flex items-center justify-center px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+                        <i class="fab fa-google text-xl"></i>
+                    </button>
+                    <button class="flex items-center justify-center px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+                        <i class="fab fa-github text-xl"></i>
+                    </button>
+                    <button class="flex items-center justify-center px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+                        <i class="fab fa-facebook text-xl"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </section>
+
+    <script>
+        function togglePassword(fieldId) {
+            const passwordInput = document.getElementById(fieldId);
+            const toggleIcon = document.getElementById(fieldId === 'password' ? 'toggleIcon1' : 'toggleIcon2');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('passwordStrength');
+            const passwordError = document.getElementById('passwordError');
+            
+            if (password.length === 0) {
+                strengthBar.className = 'password-strength';
+                passwordError.classList.remove('show');
+                return;
+            }
+
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/\d/)) strength++;
+            if (password.match(/[^a-zA-Z\d]/)) strength++;
+
+            strengthBar.className = 'password-strength';
+            if (strength <= 2) {
+                strengthBar.classList.add('weak');
+                passwordError.textContent = 'Password is too weak';
+                passwordError.classList.add('show');
+            } else if (strength === 3) {
+                strengthBar.classList.add('medium');
+                passwordError.textContent = 'Password is medium strength';
+                passwordError.classList.add('show');
+            } else {
+                strengthBar.classList.add('strong');
+                passwordError.textContent = 'Password is strong';
+                passwordError.classList.add('show');
+            }
+        }
+
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            const confirmInput = document.getElementById('confirm-password');
+
+            if (confirmPassword.length === 0) {
+                confirmPasswordError.classList.remove('show');
+                confirmInput.classList.remove('error', 'success');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                confirmPasswordError.textContent = 'Passwords do not match';
+                confirmPasswordError.classList.add('show');
+                confirmInput.classList.add('error');
+                confirmInput.classList.remove('success');
+            } else {
+                confirmPasswordError.textContent = 'Passwords match';
+                confirmPasswordError.classList.add('show');
+                confirmInput.classList.add('success');
+                confirmInput.classList.remove('error');
+            }
+        }
+
+        // Form validation
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const terms = document.getElementById('terms').checked;
+
+            let isValid = true;
+
+            if (username.length < 3) {
+                document.getElementById('usernameError').textContent = 'Username must be at least 3 characters';
+                document.getElementById('usernameError').classList.add('show');
+                isValid = false;
+            }
+
+            if (password !== confirmPassword) {
+                isValid = false;
+            }
+
+            if (!terms) {
+                alert('Please agree to the Terms and Conditions');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+    </script>
 </body>
 </html>

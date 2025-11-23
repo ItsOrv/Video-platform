@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Browse Videos - Orv Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .video-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-card .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+
+        .video-card:hover .play-overlay {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .video-thumbnail {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .video-card:hover .video-thumbnail {
+            transform: scale(1.1);
+        }
+
+        .premium-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(245, 87, 108, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(245, 87, 108, 0.8);
+            }
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .filter-btn {
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-gradient);
+            border-color: transparent;
+        }
+
+        /* Search Input Styling */
+        #searchInput {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #ffffff !important;
+        }
+
+        #searchInput::placeholder {
+            color: rgba(156, 163, 175, 1) !important;
+        }
+
+        #searchInput:focus {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border-color: #667eea !important;
+            color: #ffffff !important;
+        }
+
+        #searchInput:-webkit-autofill,
+        #searchInput:-webkit-autofill:hover,
+        #searchInput:-webkit-autofill:focus {
+            -webkit-text-fill-color: #ffffff !important;
+            -webkit-box-shadow: 0 0 0px 1000px rgba(10, 10, 15, 0.8) inset !important;
+            box-shadow: 0 0 0px 1000px rgba(10, 10, 15, 0.8) inset !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Skeleton Loaders */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s ease-in-out infinite;
+        }
+
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Fade In Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        /* Search Results */
+        .search-results {
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        /* Pagination */
+        .pagination-btn {
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Intersection Observer */
+        .observe-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .observe-fade.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .filter-btn {
+                padding: 0.625rem 1rem;
+                font-size: 0.875rem;
+                min-height: 40px;
+            }
+            
+            .video-card {
+                margin-bottom: 1rem;
+            }
+            
+            #videosGrid {
+                gap: 1rem;
+            }
+            
+            .pagination-btn {
+                padding: 0.625rem 1rem;
+                min-height: 40px;
+                font-size: 0.875rem;
+            }
+        }
+
+        /* Touch-friendly */
+        .touch-manipulation {
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .video-card:active {
+                transform: translateY(-4px) scale(1.01);
+            }
+            
+            .filter-btn:active {
+                transform: scale(0.95);
+            }
+        }
+
+        /* Safe Area Insets */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 glass-effect">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-2 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-play text-white text-lg"></i>
+                    </div>
+                    <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                        Orv Hub
+                    </span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/browse" class="nav-link active text-white font-medium">Browse</a>
+                    <a href="/categories" class="nav-link text-gray-300 hover:text-white font-medium">Categories</a>
+                    <a href="/live" class="nav-link text-gray-300 hover:text-white font-medium">Live</a>
+                    <a href="/trending" class="nav-link text-gray-300 hover:text-white font-medium">Trending</a>
+                </div>
+                <a href="/sign-in" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all font-medium">
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen">
+        <div class="container mx-auto max-w-7xl">
+            <div class="mb-8 lg:mb-12">
+                <h1 class="text-4xl lg:text-5xl font-black mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                    Browse All Videos
+                </h1>
+                <p class="text-gray-400 text-lg">Discover amazing content from our library</p>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="mb-6 sm:mb-8 space-y-4 sm:space-y-6">
+                <!-- Search Bar -->
+                <div class="relative w-full max-w-2xl">
+                    <input 
+                        type="search" 
+                        id="searchInput"
+                        class="w-full px-4 sm:px-5 py-3 pl-11 sm:pl-12 rounded-xl focus:outline-none transition-all touch-manipulation"
+                        placeholder="Search videos..."
+                        autocomplete="off"
+                        style="background: rgba(255, 255, 255, 0.05) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: #ffffff !important; min-height: 44px;">
+                    <i class="fas fa-search absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <button id="clearSearch" class="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-gray-400 active:text-white hidden touch-manipulation min-w-[32px] min-h-[32px] flex items-center justify-center">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Filters -->
+                <div class="flex flex-wrap gap-2 sm:gap-3 items-center">
+                    <span class="text-xs sm:text-sm text-gray-400 font-medium hidden sm:inline">Filter by:</span>
+                    <button class="filter-btn active px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/5 active:bg-white/10 border border-white/10 font-medium text-xs sm:text-sm touch-manipulation" data-filter="all">
+                        All
+                    </button>
+                    <button class="filter-btn px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/5 active:bg-white/10 border border-white/10 font-medium text-xs sm:text-sm touch-manipulation" data-filter="popular">
+                        Popular
+                    </button>
+                    <button class="filter-btn px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/5 active:bg-white/10 border border-white/10 font-medium text-xs sm:text-sm touch-manipulation" data-filter="newest">
+                        Newest
+                    </button>
+                    <button class="filter-btn px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/5 active:bg-white/10 border border-white/10 font-medium text-xs sm:text-sm touch-manipulation" data-filter="premium">
+                        Premium
+                    </button>
+                    <button class="filter-btn px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-white/5 active:bg-white/10 border border-white/10 font-medium text-xs sm:text-sm touch-manipulation" data-filter="free">
+                        Free
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading justify-center items-center py-20">
+                <div class="text-center">
+                    <div class="spinner border-4 border-white/10 border-t-indigo-500 rounded-full w-12 h-12 mx-auto mb-4 animate-spin"></div>
+                    <p class="text-gray-400">Loading videos...</p>
+                </div>
+            </div>
+
+            <div id="videosGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+                {% for video in videos %}
+                <article class="video-card glass-effect rounded-2xl overflow-hidden group observe-fade" data-video-id="{{ video.id }}" data-is-premium="{{ video.is_premium|lower }}" data-upload-date="{{ video.uploaded_at|date:'Y-m-d' }}">
+                    <div class="relative aspect-video overflow-hidden">
+                        <div class="video-thumbnail w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                            {% if video.thumbnail %}
+                            <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover">
+                            {% else %}
+                            <i class="fas fa-video text-5xl text-gray-600"></i>
+                            {% endif %}
+                        </div>
+                        <div class="play-overlay">
+                            <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border-2 border-white/30">
+                                <i class="fas fa-play text-white text-xl ml-1"></i>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col justify-end">
+                            <h3 class="text-lg font-bold mb-2 line-clamp-2">{{ video.title }}</h3>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-400">{{ video.uploaded_at|date:"M d, Y" }}</span>
+                                {% if video.is_premium %}
+                                <span class="premium-badge px-3 py-1 rounded-full text-xs font-bold text-white">
+                                    PREMIUM
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p class="text-gray-400 text-sm line-clamp-2">{{ video.description|truncatewords:20 }}</p>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="col-span-full text-center py-20">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-video text-5xl text-gray-600"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">No videos available yet</h3>
+                    <p class="text-gray-400">Check back later for new content</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="mt-8 sm:mt-12 flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-4">
+                <button id="prevPage" class="pagination-btn w-full sm:w-auto px-5 py-2.5 rounded-full bg-white/5 active:bg-white/10 border border-white/10 font-medium disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation min-h-[44px] flex items-center justify-center" disabled>
+                    <i class="fas fa-chevron-left mr-2"></i>Previous
+                </button>
+                <div id="pageNumbers" class="flex flex-wrap justify-center gap-2">
+                    <!-- Page numbers will be generated here -->
+                </div>
+                <button id="nextPage" class="pagination-btn w-full sm:w-auto px-5 py-2.5 rounded-full bg-white/5 active:bg-white/10 border border-white/10 font-medium disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation min-h-[44px] flex items-center justify-center">
+                    Next<i class="fas fa-chevron-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Filter and Search functionality
+        let currentFilter = 'all';
+        let currentPage = 1;
+        const videosPerPage = 12;
+        let allVideos = Array.from(document.querySelectorAll('.video-card'));
+        let filteredVideos = [...allVideos];
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.filter;
+                currentPage = 1;
+                filterVideos();
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const clearSearch = document.getElementById('clearSearch');
+        let searchTimeout;
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.toLowerCase().trim();
+                
+                if (query.length > 0) {
+                    clearSearch.classList.remove('hidden');
+                } else {
+                    clearSearch.classList.add('hidden');
+                }
+
+                searchTimeout = setTimeout(() => {
+                    filterVideos();
+                }, 300);
+            });
+        }
+
+        if (clearSearch) {
+            clearSearch.addEventListener('click', function() {
+                searchInput.value = '';
+                this.classList.add('hidden');
+                filterVideos();
+            });
+        }
+
+        function filterVideos() {
+            const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            
+            filteredVideos = allVideos.filter(video => {
+                // Search filter
+                if (query) {
+                    const title = video.querySelector('h3')?.textContent.toLowerCase() || '';
+                    const description = video.querySelector('p')?.textContent.toLowerCase() || '';
+                    if (!title.includes(query) && !description.includes(query)) {
+                        return false;
+                    }
+                }
+
+                // Category filter
+                if (currentFilter === 'premium' && video.dataset.isPremium !== 'true') {
+                    return false;
+                }
+                if (currentFilter === 'free' && video.dataset.isPremium === 'true') {
+                    return false;
+                }
+                if (currentFilter === 'newest') {
+                    // Sort by date (newest first)
+                    return true;
+                }
+                if (currentFilter === 'popular') {
+                    // Sort by popularity (you can add view count later)
+                    return true;
+                }
+
+                return true;
+            });
+
+            // Sort if needed
+            if (currentFilter === 'newest') {
+                filteredVideos.sort((a, b) => {
+                    const dateA = new Date(a.dataset.uploadDate);
+                    const dateB = new Date(b.dataset.uploadDate);
+                    return dateB - dateA;
+                });
+            }
+
+            displayVideos();
+            updatePagination();
+        }
+
+        function displayVideos() {
+            const videosGrid = document.getElementById('videosGrid');
+            const start = (currentPage - 1) * videosPerPage;
+            const end = start + videosPerPage;
+            const videosToShow = filteredVideos.slice(start, end);
+
+            // Hide all videos
+            allVideos.forEach(video => {
+                video.style.display = 'none';
+            });
+
+            // Show filtered videos
+            videosToShow.forEach(video => {
+                video.style.display = 'block';
+            });
+
+            // Show empty state if no videos
+            if (filteredVideos.length === 0) {
+                videosGrid.innerHTML = `
+                    <div class="col-span-full text-center py-20">
+                        <div class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-search text-5xl text-gray-600"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">No videos found</h3>
+                        <p class="text-gray-400">Try adjusting your search or filters</p>
+                    </div>
+                `;
+            }
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredVideos.length / videosPerPage);
+            const pageNumbers = document.getElementById('pageNumbers');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+
+            // Update buttons
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage >= totalPages || totalPages === 0;
+
+            // Generate page numbers
+            pageNumbers.innerHTML = '';
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage < maxVisiblePages - 1) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `pagination-btn w-10 h-10 rounded-full font-medium touch-manipulation min-h-[40px] ${
+                    i === currentPage 
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white' 
+                        : 'bg-white/5 active:bg-white/10 border border-white/10'
+                }`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    currentPage = i;
+                    displayVideos();
+                    updatePagination();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                pageNumbers.appendChild(pageBtn);
+            }
+        }
+
+        // Pagination buttons
+        document.getElementById('prevPage')?.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayVideos();
+                updatePagination();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        document.getElementById('nextPage')?.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredVideos.length / videosPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayVideos();
+                updatePagination();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.observe-fade').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Initialize
+        filterVideos();
+    </script>
+</body>
+</html>
