@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Playlists - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+        }
+
+        .playlist-card {
+            transition: all 0.4s ease;
+        }
+
+        .playlist-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 glass-effect p-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                Orv Hub
+            </a>
+            <a href="/profile" class="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10">Back to Profile</a>
+        </div>
+    </nav>
+
+    <section class="pt-24 pb-16 px-4">
+        <div class="container mx-auto max-w-7xl">
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-4xl font-bold">My Playlists</h1>
+                <button id="createPlaylistBtn" class="px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold">
+                    <i class="fas fa-plus mr-2"></i>Create Playlist
+                </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for playlist in playlists %}
+                <a href="/playlists/{{ playlist.id }}/" class="playlist-card glass-effect rounded-2xl overflow-hidden block">
+                    <div class="relative aspect-video">
+                        {% if playlist.videos.first.thumbnail %}
+                        <img src="{{ playlist.videos.first.thumbnail.url }}" alt="{{ playlist.name }}" class="w-full h-full object-cover" loading="lazy">
+                        {% else %}
+                        <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                            <i class="fas fa-list text-5xl text-gray-600"></i>
+                        </div>
+                        {% endif %}
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-3 sm:p-4 flex flex-col justify-end z-10">
+                            <h3 class="text-base sm:text-lg font-bold mb-1 leading-tight line-clamp-1">{{ playlist.name }}</h3>
+                            <p class="text-xs sm:text-sm text-gray-400 mt-auto">{{ playlist.videos.count }} videos</p>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="col-span-full text-center py-20">
+                    <i class="fas fa-list text-5xl text-gray-600 mb-4"></i>
+                    <p class="text-gray-400 mb-4">No playlists yet</p>
+                    <button id="createFirstPlaylistBtn" class="px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold">
+                        Create Your First Playlist
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Create Playlist Modal -->
+    <div id="createPlaylistModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div class="glass-effect rounded-2xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold mb-6">Create New Playlist</h3>
+            <form id="createPlaylistForm">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-2">Playlist Name</label>
+                    <input type="text" name="name" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold mb-2">Description</label>
+                    <textarea name="description" rows="3" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="is_public" checked class="mr-2">
+                        <span>Make playlist public</span>
+                    </label>
+                </div>
+                <div class="flex items-center justify-end space-x-3">
+                    <button type="button" id="cancelCreatePlaylist" class="px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10">Cancel</button>
+                    <button type="submit" class="px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const createBtn = document.getElementById('createPlaylistBtn') || document.getElementById('createFirstPlaylistBtn');
+        const modal = document.getElementById('createPlaylistModal');
+        const form = document.getElementById('createPlaylistForm');
+        const cancelBtn = document.getElementById('cancelCreatePlaylist');
+
+        if (createBtn) {
+            createBtn.addEventListener('click', () => {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            });
+        }
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            });
+        }
+
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                
+                fetch('/api/playlists/create/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.id) {
+                        window.location.href = '/playlists/' + data.id + '/';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moderation Dashboard - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #0a0a0f; color: #fff; font-family: 'Inter', sans-serif; }
+        .glass-effect { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.18); }
+    </style>
+</head>
+<body class="min-h-screen pt-20">
+    <div class="container mx-auto max-w-6xl px-4">
+        <h1 class="text-3xl font-bold mb-6"><i class="fas fa-shield-alt mr-2"></i>Moderation Dashboard</h1>
+        
+        <div class="glass-effect rounded-2xl p-8 mb-8">
+            <h2 class="text-xl font-bold mb-4">Pending Reports ({{ pending_reports|length }})</h2>
+            {% if pending_reports %}
+            <div class="space-y-4">
+                {% for report in pending_reports %}
+                <div class="bg-white/5 rounded-lg p-4 flex items-center justify-between">
+                    <div>
+                        <div class="font-medium">{{ report.get_report_type_display }}</div>
+                        <div class="text-sm text-gray-400">{{ report.content_type }} #{{ report.content_id }}</div>
+                        <div class="text-xs text-gray-500">{{ report.created_at|date:"M d, Y H:i" }}</div>
+                    </div>
+                    <a href="/moderation/report/{{ report.id }}/review/" class="px-4 py-2 rounded-lg bg-purple-500 hover:bg-purple-600 transition-all">
+                        Review
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12 text-gray-400">
+                <i class="fas fa-check-circle text-5xl mb-4"></i>
+                <p>No pending reports.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
+

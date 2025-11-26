@@ -1,17 +1,32 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from .models import Category
+from videos.models import Video
+
 
 def categories_list(request):
-    # Default categories
-    categories = [
-        {'name': 'Action', 'icon': 'fas fa-fire', 'video_count': 0},
-        {'name': 'Comedy', 'icon': 'fas fa-laugh', 'video_count': 0},
-        {'name': 'Drama', 'icon': 'fas fa-theater-masks', 'video_count': 0},
-        {'name': 'Documentary', 'icon': 'fas fa-film', 'video_count': 0},
-        {'name': 'Horror', 'icon': 'fas fa-ghost', 'video_count': 0},
-        {'name': 'Sci-Fi', 'icon': 'fas fa-rocket', 'video_count': 0},
-        {'name': 'Romance', 'icon': 'fas fa-heart', 'video_count': 0},
-        {'name': 'Thriller', 'icon': 'fas fa-exclamation-triangle', 'video_count': 0},
-    ]
+    """List all categories"""
+    from django.db.models import Count, Q
+    from videos.models import Video
+    
+    categories = Category.objects.filter(is_active=True).annotate(
+        video_count=Count('videos', filter=Q(videos__is_active=True))
+    ).order_by('order', 'name')
+    
     context = {'categories': categories}
     return render(request, 'categories.html', context)
+
+
+def category_detail(request, slug):
+    """Show videos in a specific category"""
+    category = get_object_or_404(Category, slug=slug, is_active=True)
+    videos = Video.objects.filter(
+        category=category,
+        is_active=True
+    ).order_by('-uploaded_at')
+    
+    context = {
+        'category': category,
+        'videos': videos,
+    }
+    return render(request, 'categories/detail.html', context)
 

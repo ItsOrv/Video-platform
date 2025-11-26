@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ playlist.name }} - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+        }
+
+        .video-card {
+            transition: all 0.4s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 glass-effect p-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                Orv Hub
+            </a>
+            <a href="/playlists" class="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10">Back to Playlists</a>
+        </div>
+    </nav>
+
+    <section class="pt-24 pb-16 px-4">
+        <div class="container mx-auto max-w-7xl">
+            <div class="glass-effect rounded-2xl p-8 mb-8">
+                <h1 class="text-4xl font-bold mb-4">{{ playlist.name }}</h1>
+                {% if playlist.description %}
+                <p class="text-gray-400 mb-4">{{ playlist.description }}</p>
+                {% endif %}
+                <div class="flex items-center space-x-6">
+                    <span class="text-gray-400">{{ playlist.videos.count }} videos</span>
+                    <span class="text-gray-400">Created {{ playlist.created_at|date:"M d, Y" }}</span>
+                    <button id="editPlaylistBtn" class="px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </button>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for playlist_video in playlist_videos %}
+                <a href="/videos/{{ playlist_video.video.id }}/" class="video-card glass-effect rounded-2xl overflow-hidden block">
+                    <div class="relative aspect-video">
+                        {% if playlist_video.video.thumbnail %}
+                        <img src="{{ playlist_video.video.thumbnail.url }}" alt="{{ playlist_video.video.title }}" class="w-full h-full object-cover" loading="lazy">
+                        {% else %}
+                        <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                            <i class="fas fa-video text-5xl text-gray-600"></i>
+                        </div>
+                        {% endif %}
+                        <div class="absolute top-3 right-3">
+                            <button class="remove-from-playlist-btn w-8 h-8 rounded-full bg-black/50 hover:bg-red-500 flex items-center justify-center" data-video-id="{{ playlist_video.video.id }}">
+                                <i class="fas fa-times text-white"></i>
+                            </button>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-3 sm:p-4 flex flex-col justify-end z-10">
+                            <h3 class="text-sm sm:text-base font-bold mb-1 line-clamp-2 leading-tight">{{ playlist_video.video.title }}</h3>
+                            <p class="text-xs text-gray-400 mt-auto whitespace-nowrap">{{ playlist_video.video.views_count }} views</p>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="col-span-full text-center py-20">
+                    <p class="text-gray-400 mb-4">This playlist is empty</p>
+                    <a href="/browse" class="px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold">
+                        Browse Videos
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.querySelectorAll('.remove-from-playlist-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const videoId = btn.dataset.videoId;
+                
+                fetch('/api/playlists/{{ playlist.id }}/remove-video/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ video_id: videoId })
+                })
+                .then(() => {
+                    btn.closest('.video-card').remove();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -44,6 +44,17 @@ urlpatterns = [
     path('sign-in/', account_views.sign_in_view, name='sign_in'),
     path('sign-up/', account_views.sign_up_view, name='sign_up'),
     path('get-started/', video_views.get_started, name='get_started'),
+    path('profile/', video_views.user_profile, name='profile'),
+    path('watch-history/', video_views.watch_history_page, name='watch_history'),
+    path('playlists/', video_views.playlists_page, name='playlists'),
+    path('playlists/<int:playlist_id>/', video_views.playlist_detail, name='playlist_detail'),
+    path('search/', video_views.search_page, name='search'),
+    
+    # Footer pages
+    path('about/', video_views.about_page, name='about'),
+    path('contact/', video_views.contact_page, name='contact'),
+    path('privacy/', video_views.privacy_page, name='privacy'),
+    path('terms/', video_views.terms_page, name='terms'),
 ]
 
 # ----------------------------------

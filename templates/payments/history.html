@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #0a0a0f; color: #fff; font-family: 'Inter', sans-serif; }
+        .glass-effect { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.18); }
+    </style>
+</head>
+<body class="min-h-screen pt-20">
+    <div class="container mx-auto max-w-4xl px-4">
+        <div class="glass-effect rounded-2xl p-8">
+            <h1 class="text-3xl font-bold mb-6"><i class="fas fa-history mr-2"></i>Payment History</h1>
+            
+            {% if payments %}
+            <div class="space-y-4">
+                {% for payment in payments %}
+                <div class="glass-effect rounded-lg p-4 flex items-center justify-between">
+                    <div>
+                        <div class="font-medium">{{ payment.description|default:"Payment" }}</div>
+                        <div class="text-sm text-gray-400">{{ payment.timestamp|date:"M d, Y H:i" }}</div>
+                        <div class="text-xs text-gray-500">Transaction: {{ payment.transaction_id }}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-lg font-bold">${{ payment.amount }}</div>
+                        <div class="text-sm {% if payment.success %}text-green-400{% else %}text-red-400{% endif %}">
+                            {% if payment.success %}Completed{% else %}Failed{% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12 text-gray-400">
+                <i class="fas fa-inbox text-5xl mb-4"></i>
+                <p>No payment history found.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
+

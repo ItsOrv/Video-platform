@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch History - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+        }
+
+        .video-card {
+            transition: all 0.4s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 glass-effect p-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                Orv Hub
+            </a>
+            <a href="/profile" class="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10">Back to Profile</a>
+        </div>
+    </nav>
+
+    <section class="pt-24 pb-16 px-4">
+        <div class="container mx-auto max-w-7xl">
+            <h1 class="text-4xl font-bold mb-8">Watch History</h1>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for history in watch_history %}
+                <a href="/videos/{{ history.video.id }}/" class="video-card glass-effect rounded-2xl overflow-hidden block">
+                    <div class="relative aspect-video">
+                        {% if history.video.thumbnail %}
+                        <img src="{{ history.video.thumbnail.url }}" alt="{{ history.video.title }}" class="w-full h-full object-cover" loading="lazy">
+                        {% endif %}
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-700">
+                            <div class="h-full bg-indigo-500" style="width: {% widthratio history.watch_position history.video.duration 100 %}%"></div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-3 sm:p-4 flex flex-col justify-end z-10">
+                            <h3 class="text-sm sm:text-base font-bold mb-1 line-clamp-2 leading-tight">{{ history.video.title }}</h3>
+                            <p class="text-xs text-gray-400 mt-auto whitespace-nowrap">{{ history.watched_at|timesince }} ago</p>
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="col-span-full text-center py-20">
+                    <p class="text-gray-400">No watch history yet</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+

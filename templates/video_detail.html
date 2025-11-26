@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="description" content="{{ video.title }} - Orv Hub">
+    <title>{{ video.title }} - Orv Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            border-color: rgba(102, 126, 234, 0.6);
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .video-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .plyr {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .plyr__video-wrapper {
+            background: #000;
+        }
+
+        .action-btn {
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .action-btn.active {
+            color: #667eea;
+        }
+
+        .comment-item {
+            transition: all 0.3s ease;
+        }
+
+        .comment-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .video-info-section {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-2 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-play text-white text-lg"></i>
+                    </div>
+                    <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                        Orv Hub
+                    </span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/browse" class="nav-link text-gray-300 hover:text-white font-medium">Browse</a>
+                    <a href="/categories" class="nav-link text-gray-300 hover:text-white font-medium">Categories</a>
+                    <a href="/live" class="nav-link text-gray-300 hover:text-white font-medium">Live</a>
+                    <a href="/trending" class="nav-link text-gray-300 hover:text-white font-medium">Trending</a>
+                </div>
+                {% if user.is_authenticated %}
+                <a href="/profile" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all font-medium">
+                    Profile
+                </a>
+                {% else %}
+                <a href="/sign-in" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all font-medium">
+                    Sign In
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Video Player Section -->
+    <section class="pt-24 pb-8 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto max-w-7xl">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                <!-- Main Video Player -->
+                <div class="lg:col-span-2">
+                    <div class="glass-effect rounded-2xl overflow-hidden p-4">
+                        <video id="player" class="plyr" playsinline controls data-poster="{{ video.thumbnail.url }}">
+                            <source src="{{ video.file.url }}" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <!-- Video Info -->
+                    <div class="mt-6 glass-effect rounded-2xl p-6">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h1 class="text-2xl lg:text-3xl font-bold mb-2">{{ video.title }}</h1>
+                                <div class="flex items-center space-x-4 text-sm text-gray-400">
+                                    <span><i class="fas fa-eye mr-1"></i>{{ video.views_count }} views</span>
+                                    <span><i class="far fa-calendar mr-1"></i>{{ video.uploaded_at|date:"M d, Y" }}</span>
+                                    {% if video.category %}
+                                    <a href="/categories/{{ video.category.slug }}" class="hover:text-white transition-colors">
+                                        <i class="fas fa-tag mr-1"></i>{{ video.category.name }}
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap items-center gap-3 mb-6">
+                            <button id="likeBtn" class="action-btn px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center space-x-2">
+                                <i class="far fa-thumbs-up"></i>
+                                <span id="likeCount">{{ video.get_likes_count }}</span>
+                            </button>
+                            <button id="dislikeBtn" class="action-btn px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center space-x-2">
+                                <i class="far fa-thumbs-down"></i>
+                                <span id="dislikeCount">{{ video.get_dislikes_count }}</span>
+                            </button>
+                            <button id="favoriteBtn" class="action-btn px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10">
+                                <i class="far fa-bookmark"></i>
+                            </button>
+                            <button id="shareBtn" class="action-btn px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10">
+                                <i class="fas fa-share"></i> Share
+                            </button>
+                            <button id="playlistBtn" class="action-btn px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10">
+                                <i class="fas fa-list"></i> Add to Playlist
+                            </button>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-semibold">Description</h3>
+                                <button id="toggleDescription" class="text-sm text-gray-400 hover:text-white">
+                                    Show more
+                                </button>
+                            </div>
+                            <p id="description" class="text-gray-300 leading-relaxed line-clamp-3">
+                                {{ video.description }}
+                            </p>
+                        </div>
+
+                        <!-- Tags -->
+                        {% if video.tags.all %}
+                        <div class="flex flex-wrap gap-2">
+                            {% for tag in video.tags.all %}
+                            <a href="/search?q={{ tag.name }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-sm">
+                                #{{ tag.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="mt-6 glass-effect rounded-2xl p-6">
+                        <h3 class="text-xl font-bold mb-6">
+                            Comments <span id="commentsCount">({{ video.get_comments_count }})</span>
+                        </h3>
+
+                        {% if user.is_authenticated %}
+                        <!-- Add Comment Form -->
+                        <form id="commentForm" class="mb-6">
+                            {% csrf_token %}
+                            <div class="flex items-start space-x-4">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-white font-bold">{{ user.username|first|upper }}</span>
+                                </div>
+                                <div class="flex-1">
+                                    <textarea id="commentInput" rows="3" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none" placeholder="Add a comment..."></textarea>
+                                    <div class="flex items-center justify-end mt-2">
+                                        <button type="submit" class="btn-primary px-6 py-2 rounded-full text-white font-semibold">
+                                            Comment
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        {% else %}
+                        <div class="mb-6 p-4 rounded-xl bg-white/5 border border-white/10 text-center">
+                            <p class="text-gray-400 mb-3">Please <a href="/sign-in" class="text-indigo-400 hover:text-indigo-300">sign in</a> to comment</p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Comments List -->
+                        <div id="commentsList" class="space-y-4">
+                            {% for comment in comments %}
+                            <div class="comment-item p-4 rounded-xl bg-white/5 border border-white/10" data-comment-id="{{ comment.id }}">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                                        <span class="text-white font-bold">{{ comment.user.username|first|upper }}</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <span class="font-semibold">{{ comment.user.username }}</span>
+                                            <span class="text-xs text-gray-400">{{ comment.created_at|timesince }} ago</span>
+                                            {% if comment.is_edited %}
+                                            <span class="text-xs text-gray-500">(edited)</span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="text-gray-300 mb-3">{{ comment.content }}</p>
+                                        <div class="flex items-center space-x-4">
+                                            <button class="comment-like-btn text-sm text-gray-400 hover:text-white flex items-center space-x-1" data-comment-id="{{ comment.id }}">
+                                                <i class="far fa-thumbs-up"></i>
+                                                <span class="comment-like-count">{{ comment.get_likes_count }}</span>
+                                            </button>
+                                            {% if user.is_authenticated %}
+                                            <button class="reply-btn text-sm text-gray-400 hover:text-white" data-comment-id="{{ comment.id }}">
+                                                Reply
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                        <!-- Replies -->
+                                        {% if comment.replies.all %}
+                                        <div class="mt-4 ml-8 space-y-3 border-l-2 border-white/10 pl-4">
+                                            {% for reply in comment.replies.all %}
+                                            <div class="comment-item p-3 rounded-lg bg-white/5">
+                                                <div class="flex items-start space-x-3">
+                                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center flex-shrink-0">
+                                                        <span class="text-white text-xs font-bold">{{ reply.user.username|first|upper }}</span>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <div class="flex items-center space-x-2 mb-1">
+                                                            <span class="text-sm font-semibold">{{ reply.user.username }}</span>
+                                                            <span class="text-xs text-gray-400">{{ reply.created_at|timesince }} ago</span>
+                                                        </div>
+                                                        <p class="text-sm text-gray-300">{{ reply.content }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <div class="text-center py-8 text-gray-400">
+                                <i class="fas fa-comments text-4xl mb-3 opacity-50"></i>
+                                <p>No comments yet. Be the first to comment!</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="lg:col-span-1">
+                    <!-- Related Videos -->
+                    <div class="glass-effect rounded-2xl p-6">
+                        <h3 class="text-xl font-bold mb-4">Related Videos</h3>
+                        <div class="space-y-4">
+                            {% for related_video in related_videos %}
+                            <a href="/videos/{{ related_video.id }}" class="video-card block glass-effect rounded-xl overflow-hidden group">
+                                <div class="relative aspect-video overflow-hidden">
+                                    {% if related_video.thumbnail %}
+                                    <img src="{{ related_video.thumbnail.url }}" alt="{{ related_video.title }}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
+                                    {% else %}
+                                    <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                                        <i class="fas fa-video text-3xl text-gray-600"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-2 sm:p-3 flex flex-col justify-end z-10">
+                                        <h4 class="text-xs sm:text-sm font-bold line-clamp-2 mb-1 leading-tight">{{ related_video.title }}</h4>
+                                        <div class="flex items-center justify-between gap-2 text-xs text-gray-400 mt-auto">
+                                            <span class="whitespace-nowrap">{{ related_video.views_count }} views</span>
+                                            <span class="whitespace-nowrap">{{ related_video.uploaded_at|date:"M d" }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            {% empty %}
+                            <p class="text-gray-400 text-sm">No related videos found.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Share Modal -->
+    <div id="shareModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div class="glass-effect rounded-2xl p-8 max-w-md w-full mx-4">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold">Share Video</h3>
+                <button id="closeShareModal" class="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Video Link</label>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="videoLink" readonly value="{{ request.build_absolute_uri }}" class="flex-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white">
+                        <button id="copyLink" class="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-2">Share on</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" class="p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-center">
+                            <i class="fab fa-facebook text-2xl mb-2"></i>
+                            <p class="text-xs">Facebook</p>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text={{ video.title|urlencode }}" target="_blank" class="p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-center">
+                            <i class="fab fa-twitter text-2xl mb-2"></i>
+                            <p class="text-xs">Twitter</p>
+                        </a>
+                        <a href="https://wa.me/?text={{ video.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" target="_blank" class="p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-center">
+                            <i class="fab fa-whatsapp text-2xl mb-2"></i>
+                            <p class="text-xs">WhatsApp</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script>
+        // Initialize Plyr player
+        const player = new Plyr('#player', {
+            controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'settings', 'fullscreen', 'pip'],
+            settings: ['quality', 'speed'],
+            speed: {
+                selected: 1,
+                options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+            },
+            keyboard: {
+                focused: true,
+                global: false
+            },
+            tooltips: {
+                controls: true,
+                seek: true
+            }
+        });
+
+        // Track watch time
+        let watchStartTime = Date.now();
+        let lastWatchPosition = 0;
+        const videoId = {{ video.id }};
+
+        player.on('play', () => {
+            watchStartTime = Date.now();
+        });
+
+        player.on('timeupdate', () => {
+            lastWatchPosition = player.currentTime;
+        });
+
+        player.on('ended', () => {
+            saveWatchHistory(true);
+        });
+
+        // Save watch history when leaving page
+        window.addEventListener('beforeunload', () => {
+            saveWatchHistory(false);
+        });
+
+        function saveWatchHistory(completed) {
+            if (!{{ user.is_authenticated|yesno:"true,false" }}) return;
+            
+            const watchDuration = Math.floor((Date.now() - watchStartTime) / 1000);
+            navigator.sendBeacon('/api/videos/' + videoId + '/watch-history/', JSON.stringify({
+                watch_duration: watchDuration,
+                watch_position: Math.floor(lastWatchPosition),
+                completed: completed
+            }));
+        }
+
+        // Like/Dislike functionality
+        const likeBtn = document.getElementById('likeBtn');
+        const dislikeBtn = document.getElementById('dislikeBtn');
+        const favoriteBtn = document.getElementById('favoriteBtn');
+        const shareBtn = document.getElementById('shareBtn');
+
+        {% if user.is_authenticated %}
+        likeBtn.addEventListener('click', () => toggleLike(true));
+        dislikeBtn.addEventListener('click', () => toggleLike(false));
+        favoriteBtn.addEventListener('click', toggleFavorite);
+        {% endif %}
+
+        shareBtn.addEventListener('click', () => {
+            document.getElementById('shareModal').classList.remove('hidden');
+            document.getElementById('shareModal').classList.add('flex');
+        });
+
+        document.getElementById('closeShareModal').addEventListener('click', () => {
+            document.getElementById('shareModal').classList.add('hidden');
+            document.getElementById('shareModal').classList.remove('flex');
+        });
+
+        document.getElementById('copyLink').addEventListener('click', () => {
+            const linkInput = document.getElementById('videoLink');
+            linkInput.select();
+            document.execCommand('copy');
+            alert('Link copied to clipboard!');
+        });
+
+        function toggleLike(isLike) {
+            fetch('/api/videos/{{ video.id }}/like/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ is_like: isLike })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('likeCount').textContent = data.likes_count;
+                document.getElementById('dislikeCount').textContent = data.dislikes_count;
+                if (data.user_liked) {
+                    likeBtn.classList.add('active');
+                    dislikeBtn.classList.remove('active');
+                } else if (data.user_disliked) {
+                    dislikeBtn.classList.add('active');
+                    likeBtn.classList.remove('active');
+                } else {
+                    likeBtn.classList.remove('active');
+                    dislikeBtn.classList.remove('active');
+                }
+            });
+        }
+
+        function toggleFavorite() {
+            fetch('/api/videos/{{ video.id }}/favorite/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_favorite) {
+                    favoriteBtn.querySelector('i').classList.remove('far');
+                    favoriteBtn.querySelector('i').classList.add('fas');
+                    favoriteBtn.classList.add('active');
+                } else {
+                    favoriteBtn.querySelector('i').classList.remove('fas');
+                    favoriteBtn.querySelector('i').classList.add('far');
+                    favoriteBtn.classList.remove('active');
+                }
+            });
+        }
+
+        // Comment functionality
+        const commentForm = document.getElementById('commentForm');
+        if (commentForm) {
+            commentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const content = document.getElementById('commentInput').value.trim();
+                if (!content) return;
+
+                fetch('/api/videos/{{ video.id }}/comments/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({ content: content })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    location.reload();
+                });
+            });
+        }
+
+        // Toggle description
+        const toggleDescription = document.getElementById('toggleDescription');
+        const description = document.getElementById('description');
+        if (toggleDescription) {
+            toggleDescription.addEventListener('click', () => {
+                if (description.classList.contains('line-clamp-3')) {
+                    description.classList.remove('line-clamp-3');
+                    toggleDescription.textContent = 'Show less';
+                } else {
+                    description.classList.add('line-clamp-3');
+                    toggleDescription.textContent = 'Show more';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

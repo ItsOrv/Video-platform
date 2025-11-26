@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Analytics - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #0a0a0f; color: #fff; font-family: 'Inter', sans-serif; }
+        .glass-effect { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.18); }
+    </style>
+</head>
+<body class="min-h-screen pt-20">
+    <div class="container mx-auto max-w-6xl px-4">
+        <h1 class="text-3xl font-bold mb-6"><i class="fas fa-chart-bar mr-2"></i>Platform Analytics</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass-effect rounded-2xl p-6">
+                <div class="text-3xl font-bold text-purple-400">{{ platform_stats.total_users|default:0 }}</div>
+                <div class="text-gray-400 mt-2">Total Users</div>
+            </div>
+            <div class="glass-effect rounded-2xl p-6">
+                <div class="text-3xl font-bold text-blue-400">{{ platform_stats.active_users|default:0 }}</div>
+                <div class="text-gray-400 mt-2">Active Users</div>
+            </div>
+            <div class="glass-effect rounded-2xl p-6">
+                <div class="text-3xl font-bold text-green-400">{{ platform_stats.total_videos|default:0 }}</div>
+                <div class="text-gray-400 mt-2">Total Videos</div>
+            </div>
+            <div class="glass-effect rounded-2xl p-6">
+                <div class="text-3xl font-bold text-yellow-400">${{ platform_stats.revenue|default:0 }}</div>
+                <div class="text-gray-400 mt-2">Revenue</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
