@@ -1,11 +1,11 @@
-
 from django.urls import path
-from . import views
+from . import views, webhooks
 
 app_name = 'payments'
 
 urlpatterns = [
-    # Define your payment-related URLs here
-    # Example:
-    # path('process/', views.process_payment, name='process_payment'),
+    path('video/<int:video_id>/', views.process_video_payment, name='video_payment'),
+    path('subscribe/<str:subscription_type>/', views.subscribe, name='subscribe'),
+    path('history/', views.payment_history, name='history'),
+    path('webhook/', webhooks.payment_webhook, name='webhook'),
 ]

@@ -1,0 +1,186 @@
+/* Mobile Optimizations */
+
+/* Bottom Navigation Bar for Mobile */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(10, 10, 15, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1000;
+    padding: env(safe-area-inset-bottom, 0) 0 0 0;
+}
+
+.mobile-bottom-nav.active {
+    display: flex;
+}
+
+.mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 0.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    min-height: 60px;
+    position: relative;
+}
+
+.mobile-nav-item.active {
+    color: #667eea;
+}
+
+.mobile-nav-item i {
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.mobile-nav-item span {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+    /* Add padding bottom to body to account for bottom nav */
+    body {
+        padding-bottom: 70px;
+    }
+
+    /* Show bottom nav on mobile */
+    .mobile-bottom-nav {
+        display: flex;
+    }
+
+    /* Hide desktop nav on mobile */
+    nav.fixed.w-full {
+        display: none;
+    }
+
+    /* Better touch targets */
+    a, button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Improved video cards for mobile */
+    .video-card {
+        margin-bottom: 1rem;
+    }
+
+    /* Mobile-optimized spacing */
+    section {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    /* Mobile grid adjustments */
+    .grid {
+        gap: 1rem;
+    }
+
+    /* Mobile typography */
+    h1 {
+        font-size: 2rem !important;
+    }
+
+    h2 {
+        font-size: 1.75rem !important;
+    }
+
+    h3 {
+        font-size: 1.5rem !important;
+    }
+
+    /* Mobile modals */
+    .modal {
+        margin: 1rem;
+        max-height: calc(100vh - 2rem);
+    }
+
+    /* Swipe gestures */
+    .swipeable {
+        touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        max-width: 100%;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    .grid-cols-4 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Landscape mobile */
+@media (max-width: 896px) and (orientation: landscape) {
+    .mobile-bottom-nav {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+    .mobile-nav-item {
+        padding: 0.5rem 0.25rem;
+        min-height: 50px;
+    }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+
+    .mobile-bottom-nav {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+}
+
+/* Touch-friendly interactions */
+.touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .video-card:active {
+        transform: translateY(-4px) scale(1.01);
+    }
+
+    .btn:active {
+        transform: scale(0.98);
+    }
+}
+
+/* Pull to refresh indicator */
+.pull-to-refresh {
+    position: fixed;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem;
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    border-radius: 0 0 1rem 1rem;
+    transition: top 0.3s ease;
+    z-index: 1001;
+}
+
+.pull-to-refresh.active {
+    top: 0;
+}
+

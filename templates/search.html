@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+        }
+
+        .video-card {
+            transition: all 0.4s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-gradient);
+            border-color: transparent;
+        }
+
+        .search-suggestions {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .search-suggestions.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 glass-effect p-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <a href="/" class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                Orv Hub
+            </a>
+            <a href="/browse" class="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10">Browse</a>
+        </div>
+    </nav>
+
+    <section class="pt-24 pb-16 px-4">
+        <div class="container mx-auto max-w-7xl">
+            <div class="mb-8">
+                <div class="relative">
+                    <input type="text" id="searchInput" 
+                           class="w-full px-6 py-4 pl-14 rounded-2xl bg-white/5 border border-white/10 text-white text-lg focus:outline-none focus:border-indigo-500"
+                           placeholder="Search for videos, categories, tags..."
+                           autocomplete="off">
+                    <i class="fas fa-search absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <div id="searchSuggestions" class="search-suggestions"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Filters Sidebar -->
+                <div class="lg:col-span-1">
+                    <div class="glass-effect rounded-2xl p-6 sticky top-24">
+                        <h3 class="text-lg font-bold mb-4">Filters</h3>
+                        
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold mb-2">Category</label>
+                            <select id="categoryFilter" class="w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none">
+                                <option value="">All Categories</option>
+                                <!-- Categories will be loaded dynamically -->
+                            </select>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold mb-2">Duration</label>
+                            <select id="durationFilter" class="w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none">
+                                <option value="">Any Duration</option>
+                                <option value="short">Short (< 5 min)</option>
+                                <option value="medium">Medium (5-20 min)</option>
+                                <option value="long">Long (> 20 min)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold mb-2">Upload Date</label>
+                            <select id="dateFilter" class="w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none">
+                                <option value="">Any Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="year">This Year</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold mb-2">Type</label>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="premiumFilter" class="mr-2">
+                                    <span>Premium Only</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="freeFilter" class="mr-2">
+                                    <span>Free Only</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block text-sm font-semibold mb-2">Sort By</label>
+                            <select id="sortFilter" class="w-full px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none">
+                                <option value="relevance">Relevance</option>
+                                <option value="date">Newest</option>
+                                <option value="views">Most Viewed</option>
+                                <option value="rating">Highest Rated</option>
+                            </select>
+                        </div>
+
+                        <button id="clearFilters" class="w-full px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10">
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results -->
+                <div class="lg:col-span-3">
+                    <div id="resultsHeader" class="mb-6">
+                        <h2 class="text-2xl font-bold mb-2">Search Results</h2>
+                        <p id="resultsCount" class="text-gray-400"></p>
+                    </div>
+
+                    <div id="loadingState" class="hidden text-center py-20">
+                        <div class="spinner border-4 border-white/10 border-t-indigo-500 rounded-full w-12 h-12 mx-auto mb-4 animate-spin"></div>
+                        <p class="text-gray-400">Searching...</p>
+                    </div>
+
+                    <div id="resultsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Results will be loaded here -->
+                    </div>
+
+                    <div id="noResults" class="hidden text-center py-20">
+                        <i class="fas fa-search text-5xl text-gray-600 mb-4"></i>
+                        <p class="text-gray-400">No videos found. Try adjusting your search or filters.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="/static/js/search.js"></script>
+</body>
+</html>
+

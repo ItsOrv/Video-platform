@@ -4,6 +4,7 @@ from . import views
 app_name = 'moderation'
 
 urlpatterns = [
-    # Define your moderation-related URLs here
+    path('report/', views.report_content, name='report'),
+    path('dashboard/', views.moderation_dashboard, name='dashboard'),
+    path('report/<int:report_id>/review/', views.review_report, name='review_report'),
 ]
-

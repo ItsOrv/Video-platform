@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ category.name }} - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #0a0a0f; color: #fff; font-family: 'Inter', sans-serif; }
+        .glass-effect { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.18); }
+    </style>
+</head>
+<body class="min-h-screen pt-20">
+    <div class="container mx-auto max-w-7xl px-4">
+        <h1 class="text-3xl font-bold mb-6">{{ category.name }}</h1>
+        {% if category.description %}
+        <p class="text-gray-400 mb-8">{{ category.description }}</p>
+        {% endif %}
+        
+        {% if videos %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for video in videos %}
+            <a href="/videos/{{ video.id }}/" class="glass-effect rounded-2xl overflow-hidden group block">
+                <div class="relative aspect-video overflow-hidden">
+                    {% if video.thumbnail %}
+                    <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover" loading="lazy">
+                    {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                        <i class="fas fa-video text-5xl text-gray-600"></i>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold mb-2 line-clamp-2">{{ video.title }}</h3>
+                    <div class="flex items-center justify-between text-sm text-gray-400">
+                        <span>{{ video.views_count }} views</span>
+                        <span>{{ video.uploaded_at|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12 text-gray-400">
+            <i class="fas fa-video text-5xl mb-4"></i>
+            <p>No videos in this category yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+

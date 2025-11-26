@@ -5,10 +5,13 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security settings
-SECRET_KEY = 'django-insecure-u1+ng!1m8y0%-ueijwn#6#hm+_(1-ev$e415duh+&qd+8$1770'
-DEBUG = True
+import os
+from pathlib import Path
 
-ALLOWED_HOSTS = ['*']  # Change this for production!
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-u1+ng!1m8y0%-ueijwn#6#hm+_(1-ev$e415duh+&qd+8$1770')
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Application definition
 INSTALLED_APPS = [
@@ -107,19 +110,32 @@ AUTH_USER_MODEL = 'accounts.CustomUser'  # Custom user model for the project
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Email settings (use a real SMTP service in production)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() == 'true'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@orvhub.com')
 
 # Subscription and Payment Settings
-# Define the plans, payment gateway configuration, etc.
-PAYMENT_GATEWAY_KEY = 'your-payment-gateway-key'
+PAYMENT_GATEWAY_KEY = os.environ.get('PAYMENT_GATEWAY_KEY', '')
+PAYMENT_SIMULATE_SUCCESS = os.environ.get('PAYMENT_SIMULATE_SUCCESS', 'true').lower() == 'true'
 
 # Secure video streaming (for DRM)
 VIDEO_STREAMING_SERVER = 'your-video-streaming-server-url'
 
-# For deployment, consider adding these settings:
-# CSRF_COOKIE_SECURE = True  # If you're using HTTPS in production
-# SESSION_COOKIE_SECURE = True  # To use cookies securely
-# SECURE_SSL_REDIRECT = True  # Automatically redirect HTTP to HTTPS
+# Security settings for production
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
 
 # Custom site domain if needed
 

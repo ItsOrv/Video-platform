@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ video.title }} - Analytics - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #0a0a0f; color: #fff; font-family: 'Inter', sans-serif; }
+        .glass-effect { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.18); }
+    </style>
+</head>
+<body class="min-h-screen pt-20">
+    <div class="container mx-auto max-w-6xl px-4">
+        <h1 class="text-3xl font-bold mb-6">{{ video.title }}</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="glass-effect rounded-2xl p-6">
+                <div class="text-3xl font-bold text-purple-400">{{ analytics.total_views|default:0 }}</div>
+                <div class="text-gray-400 mt-2">Total Views</div>
+            </div>
+            <div class="glass-effect rounded-2xl p-6">
+                <div class="text-3xl font-bold text-blue-400">{{ analytics.unique_viewers|default:0 }}</div>
+                <div class="text-gray-400 mt-2">Unique Viewers</div>
+            </div>
+            <div class="glass-effect rounded-2xl p-6">
+                <div class="text-3xl font-bold text-green-400">{{ completion_rate|floatformat:1 }}%</div>
+                <div class="text-gray-400 mt-2">Completion Rate</div>
+            </div>
+            <div class="glass-effect rounded-2xl p-6">
+                <div class="text-3xl font-bold text-yellow-400">{{ analytics.likes_count|default:0 }}</div>
+                <div class="text-gray-400 mt-2">Likes</div>
+            </div>
+        </div>
+        
+        <div class="glass-effect rounded-2xl p-8">
+            <h2 class="text-xl font-bold mb-4">Recent Views</h2>
+            {% if recent_views %}
+            <div class="space-y-2">
+                {% for view in recent_views %}
+                <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+                    <div>
+                        <div class="text-sm text-gray-400">{{ view.viewed_at|date:"M d, Y H:i" }}</div>
+                        <div class="text-xs text-gray-500">{{ view.watch_duration }}s watched</div>
+                    </div>
+                    {% if view.completed %}
+                    <span class="px-2 py-1 rounded bg-green-500/20 text-green-400 text-xs">Completed</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12 text-gray-400">
+                <i class="fas fa-eye text-5xl mb-4"></i>
+                <p>No views yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
+

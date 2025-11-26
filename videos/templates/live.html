@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Streams - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .live-badge {
+            background: #ef4444;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 glass-effect">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
+                    Orv Hub
+                </a>
+                <div class="flex items-center space-x-6">
+                    <a href="/browse" class="text-gray-300 hover:text-white">Browse</a>
+                    <a href="/categories" class="text-gray-300 hover:text-white">Categories</a>
+                    <a href="/trending" class="text-gray-300 hover:text-white">Trending</a>
+                    <a href="/sign-in" class="px-6 py-2 rounded-full bg-gray-800 hover:bg-gray-700">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pt-24 px-6 py-12">
+        <div class="container mx-auto">
+            <h1 class="text-4xl font-bold mb-8 flex items-center">
+                <span class="live-badge w-3 h-3 rounded-full mr-3"></span>
+                Live Streams
+            </h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-effect rounded-xl overflow-hidden">
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-800 flex items-center justify-center">
+                        <i class="fas fa-video text-4xl text-gray-600"></i>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-lg font-semibold">Live Stream 1</h3>
+                            <span class="live-badge px-2 py-1 rounded text-xs font-semibold">LIVE</span>
+                        </div>
+                        <p class="text-gray-400 text-sm">Streaming now</p>
+                    </div>
+                </div>
+                <div class="col-span-full text-center py-12">
+                    <p class="text-gray-400 text-xl">No live streams available at the moment.</p>
+                    <p class="text-gray-500 text-sm mt-2">Check back later for live content!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+

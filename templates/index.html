@@ -14,6 +14,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/design-tokens.css" rel="stylesheet">
+    <link href="/static/css/components.css" rel="stylesheet">
+    <link href="/static/css/mobile.css" rel="stylesheet">
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
@@ -275,6 +278,45 @@
         .live-badge {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             animation: pulse-live 2s ease-in-out infinite;
+        }
+
+        .live-stream-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .live-stream-card .aspect-video {
+            min-height: 200px;
+            position: relative;
+        }
+
+        .live-stream-card .stream-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.875rem 1rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.90) 40%, rgba(0, 0, 0, 0.70) 70%, transparent 100%);
+            z-index: 10;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+        
+        .live-stream-card .stream-content h3 {
+            line-height: 1.3;
+            margin-bottom: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        
+        .live-stream-card .stream-content > div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: auto;
         }
 
         @keyframes pulse-live {
@@ -953,20 +995,20 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for stream in live_streams %}
-                <div class="glass-effect rounded-2xl overflow-hidden group cursor-pointer hover:scale-105 transition-transform">
+                <div class="live-stream-card glass-effect rounded-2xl group cursor-pointer hover:scale-105 transition-transform">
                     <div class="relative aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-                        <i class="fas fa-video text-5xl text-gray-600"></i>
-                        <div class="absolute top-3 left-3">
-                            <span class="live-badge px-3 py-1 rounded-full text-xs font-bold text-white flex items-center space-x-2">
+                        <i class="fas fa-video text-5xl text-gray-600 z-0"></i>
+                        <div class="absolute top-2 left-2 sm:top-3 sm:left-3 z-20">
+                            <span class="live-badge px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-bold text-white flex items-center space-x-1 sm:space-x-2 whitespace-nowrap">
                                 <div class="live-dot"></div>
                                 <span>LIVE</span>
                             </span>
                         </div>
-                        <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
-                            <h3 class="text-lg font-bold mb-1">{{ stream.title }}</h3>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs text-gray-400">{{ stream.category }}</span>
-                                <span class="text-xs text-gray-400 flex items-center space-x-1">
+                        <div class="stream-content">
+                            <h3 class="text-base sm:text-lg font-bold mb-1 text-white line-clamp-1 leading-tight">{{ stream.title }}</h3>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-xs text-gray-300 whitespace-nowrap">{{ stream.category }}</span>
+                                <span class="text-xs text-gray-300 flex items-center space-x-1 whitespace-nowrap">
                                     <i class="fas fa-eye"></i>
                                     <span>{{ stream.viewers }} watching</span>
                                 </span>
@@ -974,6 +1016,45 @@
                         </div>
                     </div>
                 </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Continue Watching Section -->
+    {% if user.is_authenticated and continue_watching|length > 0 %}
+    <section class="py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto max-w-7xl">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl lg:text-3xl font-bold mb-2">Continue Watching</h2>
+                    <p class="text-gray-400">Pick up where you left off</p>
+                </div>
+                <a href="/watch-history" class="text-indigo-400 hover:text-indigo-300 font-semibold flex items-center space-x-2">
+                    <span>View All</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                {% for history in continue_watching %}
+                <a href="/videos/{{ history.video.id }}/" class="video-card glass-effect rounded-xl overflow-hidden group block">
+                    <div class="relative aspect-video overflow-hidden">
+                        {% if history.video.thumbnail %}
+                        <img src="{{ history.video.thumbnail.url }}" alt="{{ history.video.title }}" class="w-full h-full object-cover" loading="lazy">
+                        {% else %}
+                        <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                            <i class="fas fa-video text-3xl text-gray-600"></i>
+                        </div>
+                        {% endif %}
+                        <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-700">
+                            <div class="h-full bg-indigo-500" style="width: {% widthratio history.watch_position history.video.duration 100 %}%"></div>
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-2 sm:p-3 flex flex-col justify-end z-10">
+                            <h4 class="text-xs sm:text-sm font-bold line-clamp-2 leading-tight">{{ history.video.title }}</h4>
+                        </div>
+                    </div>
+                </a>
                 {% endfor %}
             </div>
         </div>
@@ -994,11 +1075,17 @@
             {% if featured_videos|length > 0 %}
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-12">
                 {% for video in featured_videos %}
-                <article class="video-card glass-effect rounded-2xl overflow-hidden group observe-fade" data-video-src="{% if video.file %}{{ video.file.url }}{% endif %}">
+                <a href="/videos/{{ video.id }}/" class="video-card glass-effect rounded-2xl overflow-hidden group observe-fade block"
+                   data-video-id="{{ video.id }}"
+                   data-video-src="{% if video.file %}{{ video.file.url }}{% endif %}"
+                   data-views="{{ video.views_count }}"
+                   data-duration="{{ video.duration }}"
+                   data-uploader="{{ video.uploaded_by.username }}"
+                   data-date="{{ video.uploaded_at|date:'M d, Y' }}">
                     <div class="relative aspect-video overflow-hidden">
                         <div class="video-thumbnail w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
                             {% if video.thumbnail %}
-                            <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover">
+                            <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover" loading="lazy">
                             {% else %}
                             <i class="fas fa-video text-5xl text-gray-600"></i>
                             {% endif %}
@@ -1008,12 +1095,12 @@
                                 <i class="fas fa-play text-white text-xl ml-1"></i>
                             </div>
                         </div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col justify-end">
-                            <h3 class="text-lg font-bold mb-2 line-clamp-2">{{ video.title }}</h3>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs text-gray-400">{{ video.uploaded_at|date:"M d, Y" }}</span>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-3 sm:p-4 flex flex-col justify-end z-10">
+                            <h3 class="text-base sm:text-lg font-bold mb-1.5 sm:mb-2 line-clamp-2 leading-tight">{{ video.title }}</h3>
+                            <div class="flex items-center justify-between gap-2 mt-auto">
+                                <span class="text-xs text-gray-400 whitespace-nowrap">{{ video.uploaded_at|date:"M d, Y" }}</span>
                                 {% if video.is_premium %}
-                                <span class="premium-badge px-3 py-1 rounded-full text-xs font-bold text-white">
+                                <span class="premium-badge px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-bold text-white whitespace-nowrap flex-shrink-0">
                                     PREMIUM
                                 </span>
                                 {% endif %}
@@ -1626,5 +1713,7 @@
         preloadLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap';
         document.head.appendChild(preloadLink);
     </script>
+    <script src="/static/js/video-preview.js"></script>
+    <script src="/static/js/theme-toggle.js"></script>
 </body>
 </html>

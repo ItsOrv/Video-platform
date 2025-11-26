@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Orv Hub</title>
+    <meta name="theme-color" content="#0a0a0f">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 glass-effect">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-2 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-play text-white text-lg"></i>
+                    </div>
+                    <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                        Orv Hub
+                    </span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/browse" class="text-gray-300 hover:text-white font-medium">Browse</a>
+                    <a href="/categories" class="text-gray-300 hover:text-white font-medium">Categories</a>
+                    <a href="/live" class="text-gray-300 hover:text-white font-medium">Live</a>
+                    <a href="/trending" class="text-gray-300 hover:text-white font-medium">Trending</a>
+                </div>
+                <a href="/sign-in" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all font-medium">
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 min-h-screen">
+        <div class="container mx-auto max-w-4xl">
+            <div class="glass-effect rounded-3xl p-8 lg:p-12">
+                <h1 class="text-4xl lg:text-5xl font-black mb-6 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400">
+                    Privacy Policy
+                </h1>
+                
+                <div class="space-y-6 text-gray-300 leading-relaxed">
+                    <p class="text-sm text-gray-400 mb-6">Last updated: January 2025</p>
+                    
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-4">1. Information We Collect</h2>
+                        <p>
+                            We collect information that you provide directly to us, including account information, payment details, and content you upload or interact with on our platform.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-4">2. How We Use Your Information</h2>
+                        <p>
+                            We use the information we collect to provide, maintain, and improve our services, process transactions, send communications, and personalize your experience.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-4">3. Data Security</h2>
+                        <p>
+                            We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-4">4. Your Rights</h2>
+                        <p>
+                            You have the right to access, update, or delete your personal information at any time. You can manage your privacy settings through your account dashboard.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-4">5. Cookies and Tracking</h2>
+                        <p>
+                            We use cookies and similar tracking technologies to enhance your experience, analyze usage patterns, and provide personalized content.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-4">6. Third-Party Services</h2>
+                        <p>
+                            Our platform may contain links to third-party websites or services. We are not responsible for the privacy practices of these external sites.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h2 class="text-2xl font-bold text-white mb-4">7. Changes to This Policy</h2>
+                        <p>
+                            We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page.
+                        </p>
+                    </div>
+                    
+                    <div class="pt-6">
+                        <p class="text-white">
+                            If you have any questions about this Privacy Policy, please <a href="/contact" class="text-indigo-400 hover:text-indigo-300 underline">contact us</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+

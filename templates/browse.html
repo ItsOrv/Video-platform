@@ -348,11 +348,19 @@
 
             <div id="videosGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
                 {% for video in videos %}
-                <article class="video-card glass-effect rounded-2xl overflow-hidden group observe-fade" data-video-id="{{ video.id }}" data-is-premium="{{ video.is_premium|lower }}" data-upload-date="{{ video.uploaded_at|date:'Y-m-d' }}">
+                <a href="/videos/{{ video.id }}/" class="video-card glass-effect rounded-2xl overflow-hidden group observe-fade block" 
+                   data-video-id="{{ video.id }}" 
+                   data-video-src="{% if video.file %}{{ video.file.url }}{% endif %}"
+                   data-is-premium="{{ video.is_premium|lower }}" 
+                   data-upload-date="{{ video.uploaded_at|date:'Y-m-d' }}"
+                   data-views="{{ video.views_count }}"
+                   data-duration="{{ video.duration }}"
+                   data-uploader="{{ video.uploaded_by.username }}"
+                   data-date="{{ video.uploaded_at|date:'M d, Y' }}">
                     <div class="relative aspect-video overflow-hidden">
                         <div class="video-thumbnail w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
                             {% if video.thumbnail %}
-                            <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover">
+                            <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover" loading="lazy">
                             {% else %}
                             <i class="fas fa-video text-5xl text-gray-600"></i>
                             {% endif %}
@@ -362,12 +370,12 @@
                                 <i class="fas fa-play text-white text-xl ml-1"></i>
                             </div>
                         </div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 flex flex-col justify-end">
-                            <h3 class="text-lg font-bold mb-2 line-clamp-2">{{ video.title }}</h3>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs text-gray-400">{{ video.uploaded_at|date:"M d, Y" }}</span>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-3 sm:p-4 flex flex-col justify-end z-10">
+                            <h3 class="text-base sm:text-lg font-bold mb-1.5 sm:mb-2 line-clamp-2 leading-tight">{{ video.title }}</h3>
+                            <div class="flex items-center justify-between gap-2 mt-auto">
+                                <span class="text-xs text-gray-400 whitespace-nowrap">{{ video.uploaded_at|date:"M d, Y" }}</span>
                                 {% if video.is_premium %}
-                                <span class="premium-badge px-3 py-1 rounded-full text-xs font-bold text-white">
+                                <span class="premium-badge px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-bold text-white whitespace-nowrap flex-shrink-0">
                                     PREMIUM
                                 </span>
                                 {% endif %}
@@ -377,7 +385,7 @@
                     <div class="p-4">
                         <p class="text-gray-400 text-sm line-clamp-2">{{ video.description|truncatewords:20 }}</p>
                     </div>
-                </article>
+                </a>
                 {% empty %}
                 <div class="col-span-full text-center py-20">
                     <div class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center mx-auto mb-6">
@@ -607,5 +615,6 @@
         // Initialize
         filterVideos();
     </script>
+    <script src="/static/js/video-preview.js"></script>
 </body>
 </html>

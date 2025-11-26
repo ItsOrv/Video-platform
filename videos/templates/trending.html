@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trending Videos - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 glass-effect">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
+                    Orv Hub
+                </a>
+                <div class="flex items-center space-x-6">
+                    <a href="/browse" class="text-gray-300 hover:text-white">Browse</a>
+                    <a href="/categories" class="text-gray-300 hover:text-white">Categories</a>
+                    <a href="/trending" class="text-gray-300 hover:text-white">Trending</a>
+                    <a href="/sign-in" class="px-6 py-2 rounded-full bg-gray-800 hover:bg-gray-700">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="pt-24 px-6 py-12">
+        <div class="container mx-auto">
+            <h1 class="text-4xl font-bold mb-8 flex items-center">
+                <i class="fas fa-fire text-red-500 mr-3"></i>
+                Trending Now
+            </h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for video in videos %}
+                <div class="glass-effect rounded-xl overflow-hidden">
+                    <div class="aspect-w-16 aspect-h-9 bg-gray-800"></div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold mb-2">{{ video.title }}</h3>
+                        <p class="text-gray-400 text-sm">{{ video.description|truncatewords:15 }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full text-center py-12">
+                    <p class="text-gray-400 text-xl">No trending videos available yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+

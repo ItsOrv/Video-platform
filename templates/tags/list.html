@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tags - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #0a0a0f; color: #fff; font-family: 'Inter', sans-serif; }
+        .glass-effect { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.18); }
+    </style>
+</head>
+<body class="min-h-screen pt-20">
+    <div class="container mx-auto max-w-6xl px-4">
+        <h1 class="text-3xl font-bold mb-6"><i class="fas fa-tags mr-2"></i>All Tags</h1>
+        
+        {% if tags %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for tag in tags %}
+            <a href="/tags/{{ tag.slug }}/" class="glass-effect rounded-lg p-4 flex items-center justify-between hover:bg-white/10 transition-all">
+                <div>
+                    <div class="font-medium">#{{ tag.name }}</div>
+                    <div class="text-sm text-gray-400">{{ tag.video_count }} videos</div>
+                </div>
+                <i class="fas fa-chevron-right text-gray-400"></i>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12 text-gray-400">
+            <i class="fas fa-tags text-5xl mb-4"></i>
+            <p>No tags yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+

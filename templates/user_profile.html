@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#0a0a0f">
+    <title>{{ user.username }} - Profile - Orv Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: var(--primary-gradient);
+            border-color: transparent;
+        }
+
+        .video-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .video-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .profile-cover {
+            height: 300px;
+            background: var(--primary-gradient);
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border: 4px solid #0a0a0f;
+            margin-top: -75px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-2 group">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                        <i class="fas fa-play text-white text-lg"></i>
+                    </div>
+                    <span class="text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                        Orv Hub
+                    </span>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/browse" class="nav-link text-gray-300 hover:text-white font-medium">Browse</a>
+                    <a href="/categories" class="nav-link text-gray-300 hover:text-white font-medium">Categories</a>
+                    <a href="/live" class="nav-link text-gray-300 hover:text-white font-medium">Live</a>
+                    <a href="/trending" class="nav-link text-gray-300 hover:text-white font-medium">Trending</a>
+                </div>
+                <a href="/profile" class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all font-medium">
+                    Profile
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <section class="pt-24">
+        <div class="profile-cover"></div>
+        <div class="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-start md:items-end space-y-4 md:space-y-0 md:space-x-6 pb-8">
+                <div class="profile-avatar rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-5xl font-black text-white">
+                    {{ user.username|first|upper }}
+                </div>
+                <div class="flex-1">
+                    <h1 class="text-3xl lg:text-4xl font-black mb-2">{{ user.username }}</h1>
+                    <p class="text-gray-400 mb-4">{{ user.email }}</p>
+                    <div class="flex flex-wrap items-center gap-6">
+                        <div>
+                            <div class="text-2xl font-bold">{{ total_views|default:0 }}</div>
+                            <div class="text-sm text-gray-400">Total Views</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold">{{ uploaded_count|default:0 }}</div>
+                            <div class="text-sm text-gray-400">Videos Uploaded</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold">{{ followers_count|default:0 }}</div>
+                            <div class="text-sm text-gray-400">Followers</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold">{{ following_count|default:0 }}</div>
+                            <div class="text-sm text-gray-400">Following</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <a href="/settings" class="px-6 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all font-medium">
+                        <i class="fas fa-cog mr-2"></i>Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Content -->
+    <section class="pb-16 px-4 sm:px-6 lg:px-8">
+        <div class="container mx-auto max-w-7xl">
+            <!-- Tabs -->
+            <div class="flex flex-wrap gap-2 mb-8 border-b border-white/10">
+                <button class="tab-button active px-6 py-3 rounded-t-xl bg-white/5 border border-white/10 border-b-0 font-medium" data-tab="videos">
+                    <i class="fas fa-video mr-2"></i>Videos
+                </button>
+                <button class="tab-button px-6 py-3 rounded-t-xl bg-white/5 border border-white/10 border-b-0 font-medium" data-tab="playlists">
+                    <i class="fas fa-list mr-2"></i>Playlists
+                </button>
+                <button class="tab-button px-6 py-3 rounded-t-xl bg-white/5 border border-white/10 border-b-0 font-medium" data-tab="favorites">
+                    <i class="fas fa-bookmark mr-2"></i>Favorites
+                </button>
+                <button class="tab-button px-6 py-3 rounded-t-xl bg-white/5 border border-white/10 border-b-0 font-medium" data-tab="history">
+                    <i class="fas fa-history mr-2"></i>Watch History
+                </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div id="tabContent">
+                <!-- Videos Tab -->
+                <div id="videosTab" class="tab-content">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {% for video in uploaded_videos %}
+                        <a href="/videos/{{ video.id }}/" class="video-card glass-effect rounded-2xl overflow-hidden group block">
+                            <div class="relative aspect-video overflow-hidden">
+                                {% if video.thumbnail %}
+                                <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="w-full h-full object-cover" loading="lazy">
+                                {% else %}
+                                <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                                    <i class="fas fa-video text-5xl text-gray-600"></i>
+                                </div>
+                                {% endif %}
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-3 sm:p-4 flex flex-col justify-end z-10">
+                                    <h3 class="text-base sm:text-lg font-bold mb-1.5 sm:mb-2 line-clamp-2 leading-tight">{{ video.title }}</h3>
+                                    <div class="flex items-center justify-between gap-2 mt-auto">
+                                        <span class="text-xs text-gray-400 whitespace-nowrap">{{ video.views_count }} views</span>
+                                        <span class="text-xs text-gray-400 whitespace-nowrap">{{ video.uploaded_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% empty %}
+                        <div class="col-span-full text-center py-20">
+                            <i class="fas fa-video text-5xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-400">No videos uploaded yet</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Playlists Tab -->
+                <div id="playlistsTab" class="tab-content hidden">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {% for playlist in playlists %}
+                        <a href="/playlists/{{ playlist.id }}/" class="glass-effect rounded-2xl overflow-hidden group block">
+                            <div class="relative aspect-video overflow-hidden">
+                                {% if playlist.videos.first.thumbnail %}
+                                <img src="{{ playlist.videos.first.thumbnail.url }}" alt="{{ playlist.name }}" class="w-full h-full object-cover" loading="lazy">
+                                {% else %}
+                                <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                                    <i class="fas fa-list text-5xl text-gray-600"></i>
+                                </div>
+                                {% endif %}
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-3 sm:p-4 flex flex-col justify-end z-10">
+                                    <h3 class="text-base sm:text-lg font-bold mb-1 leading-tight line-clamp-1">{{ playlist.name }}</h3>
+                                    <p class="text-xs sm:text-sm text-gray-400 mt-auto">{{ playlist.videos.count }} videos</p>
+                                </div>
+                            </div>
+                        </a>
+                        {% empty %}
+                        <div class="col-span-full text-center py-20">
+                            <i class="fas fa-list text-5xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-400 mb-4">No playlists yet</p>
+                            <a href="/playlists/create" class="px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold">
+                                Create Playlist
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Favorites Tab -->
+                <div id="favoritesTab" class="tab-content hidden">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {% for favorite in favorites %}
+                        <a href="/videos/{{ favorite.video.id }}/" class="video-card glass-effect rounded-2xl overflow-hidden group block">
+                            <div class="relative aspect-video overflow-hidden">
+                                {% if favorite.video.thumbnail %}
+                                <img src="{{ favorite.video.thumbnail.url }}" alt="{{ favorite.video.title }}" class="w-full h-full object-cover" loading="lazy">
+                                {% else %}
+                                <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                                    <i class="fas fa-video text-5xl text-gray-600"></i>
+                                </div>
+                                {% endif %}
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-3 sm:p-4 flex flex-col justify-end z-10">
+                                    <h3 class="text-base sm:text-lg font-bold mb-1.5 sm:mb-2 line-clamp-2 leading-tight">{{ favorite.video.title }}</h3>
+                                    <div class="flex items-center justify-between gap-2 mt-auto">
+                                        <span class="text-xs text-gray-400 whitespace-nowrap">{{ favorite.video.views_count }} views</span>
+                                        <span class="text-xs text-gray-400 whitespace-nowrap">{{ favorite.video.uploaded_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% empty %}
+                        <div class="col-span-full text-center py-20">
+                            <i class="fas fa-bookmark text-5xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-400">No favorite videos yet</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- History Tab -->
+                <div id="historyTab" class="tab-content hidden">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {% for history in watch_history %}
+                        <a href="/videos/{{ history.video.id }}/" class="video-card glass-effect rounded-2xl overflow-hidden group block">
+                            <div class="relative aspect-video overflow-hidden">
+                                {% if history.video.thumbnail %}
+                                <img src="{{ history.video.thumbnail.url }}" alt="{{ history.video.title }}" class="w-full h-full object-cover" loading="lazy">
+                                {% else %}
+                                <div class="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                                    <i class="fas fa-video text-5xl text-gray-600"></i>
+                                </div>
+                                {% endif %}
+                                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-700">
+                                    <div class="h-full bg-indigo-500" style="width: {% widthratio history.watch_position history.video.duration 100 %}%"></div>
+                                </div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-transparent p-3 sm:p-4 flex flex-col justify-end z-10">
+                                    <h3 class="text-base sm:text-lg font-bold mb-1.5 sm:mb-2 line-clamp-2 leading-tight">{{ history.video.title }}</h3>
+                                    <div class="flex items-center justify-between gap-2 mt-auto">
+                                        <span class="text-xs text-gray-400 whitespace-nowrap">{{ history.watched_at|timesince }} ago</span>
+                                        {% if history.completed %}
+                                        <span class="text-xs text-green-400 whitespace-nowrap"><i class="fas fa-check-circle"></i> Completed</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% empty %}
+                        <div class="col-span-full text-center py-20">
+                            <i class="fas fa-history text-5xl text-gray-600 mb-4"></i>
+                            <p class="text-gray-400">No watch history yet</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+                
+                // Update buttons
+                document.querySelectorAll('.tab-button').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                button.classList.add('active');
+                
+                // Update content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
+

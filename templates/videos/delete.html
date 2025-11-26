@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Video - Orv Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: #0a0a0f; color: #fff; font-family: 'Inter', sans-serif; }
+        .glass-effect { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.18); }
+    </style>
+</head>
+<body class="min-h-screen pt-20">
+    <div class="container mx-auto max-w-2xl px-4">
+        <div class="glass-effect rounded-2xl p-8">
+            <h1 class="text-3xl font-bold mb-6 text-red-500"><i class="fas fa-exclamation-triangle mr-2"></i>Delete Video</h1>
+            
+            <div class="mb-6 p-4 rounded-lg bg-red-500/20 border border-red-500">
+                <p class="font-medium">Are you sure you want to delete this video?</p>
+                <p class="text-sm text-gray-400 mt-2">This action cannot be undone.</p>
+            </div>
+            
+            <div class="mb-6">
+                <h2 class="text-xl font-bold mb-2">{{ video.title }}</h2>
+                {% if video.thumbnail %}
+                <img src="{{ video.thumbnail.url }}" alt="{{ video.title }}" class="rounded-lg max-w-xs mb-2">
+                {% endif %}
+                <p class="text-gray-400">{{ video.views_count }} views • {{ video.uploaded_at|date:"M d, Y" }}</p>
+            </div>
+            
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div class="flex space-x-4">
+                    <button type="submit" class="flex-1 py-3 rounded-lg bg-red-500 hover:bg-red-600 font-medium transition-all">
+                        <i class="fas fa-trash mr-2"></i>Delete Video
+                    </button>
+                    <a href="/videos/{{ video.id }}/" class="px-6 py-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 font-medium transition-all">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
+
