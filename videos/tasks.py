@@ -7,7 +7,10 @@ from django.core.files.base import ContentFile
 from PIL import Image
 import os
 import subprocess
+import logging
 from .models import Video
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task
@@ -36,18 +39,20 @@ def process_video(video_id):
                     video.duration = duration
                     video.save(update_fields=['duration'])
             except Exception as e:
-                print(f"Error extracting duration: {e}")
+                logger.error(f"Error extracting duration for video {video_id}: {e}", exc_info=True)
             
             # Generate thumbnail
             try:
                 generate_thumbnail.delay(video_id)
-            except:
-                pass
+            except Exception as e:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Could not queue thumbnail generation task: {e}")
         
     except Video.DoesNotExist:
-        print(f"Video {video_id} not found")
+        logger.warning(f"Video {video_id} not found")
     except Exception as e:
-        print(f"Error processing video {video_id}: {e}")
+        logger.error(f"Error processing video {video_id}: {e}", exc_info=True)
 
 
 @shared_task
@@ -96,14 +101,14 @@ def generate_thumbnail(video_id):
                 # Clean up temporary file
                 os.remove(thumbnail_path)
         except subprocess.CalledProcessError as e:
-            print(f"Error generating thumbnail: {e}")
+            logger.error(f"Error generating thumbnail for video {video_id}: {e}", exc_info=True)
         except Exception as e:
-            print(f"Error processing thumbnail: {e}")
+            logger.error(f"Error processing thumbnail for video {video_id}: {e}", exc_info=True)
     
     except Video.DoesNotExist:
-        print(f"Video {video_id} not found")
+        logger.warning(f"Video {video_id} not found for thumbnail generation")
     except Exception as e:
-        print(f"Error in generate_thumbnail: {e}")
+        logger.error(f"Error in generate_thumbnail for video {video_id}: {e}", exc_info=True)
 
 
 @shared_task
@@ -145,9 +150,9 @@ def update_video_analytics(video_id):
         analytics.save()
     
     except Video.DoesNotExist:
-        print(f"Video {video_id} not found")
+        logger.warning(f"Video {video_id} not found for analytics update")
     except Exception as e:
-        print(f"Error updating analytics: {e}")
+        logger.error(f"Error updating analytics for video {video_id}: {e}", exc_info=True)
 
 
 @shared_task
@@ -160,7 +165,7 @@ def cleanup_old_files():
         # This is a placeholder - implement based on your needs
         pass
     except Exception as e:
-        print(f"Error in cleanup: {e}")
+        logger.error(f"Error in cleanup_old_files: {e}", exc_info=True)
 
 
 @shared_task
@@ -173,5 +178,5 @@ def send_video_notification(video_id, user_ids):
         # This could send emails, push notifications, etc.
         pass
     except Exception as e:
-        print(f"Error sending notifications: {e}")
+        logger.error(f"Error sending notifications for video {video_id}: {e}", exc_info=True)
 
