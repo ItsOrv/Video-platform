@@ -1,10 +1,10 @@
-# Orv Hub - Video Streaming Platform
+# Video Platform
 
 A comprehensive video streaming platform built with Django, featuring content management, user subscriptions, payment processing, and analytics.
 
 ## Overview
 
-Orv Hub is a full-featured video streaming platform designed for delivering premium and free video content. The platform includes live streaming capabilities, user authentication, subscription management, content moderation, and comprehensive analytics.
+Video Platform is a full-featured video streaming solution designed for delivering premium and free video content. The platform includes live streaming capabilities, user authentication, subscription management, content moderation, and comprehensive analytics.
 
 ## Features
 
