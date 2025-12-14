@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Count, Sum, Avg, Q
 from django.utils import timezone
@@ -44,7 +44,7 @@ def user_analytics(request):
 @login_required
 def video_analytics_detail(request, video_id):
     """Detailed analytics for a specific video"""
-    video = Video.objects.get(id=video_id, uploaded_by=request.user)
+    video = get_object_or_404(Video, id=video_id, uploaded_by=request.user)
     
     # Get or create analytics
     analytics, created = VideoAnalytics.objects.get_or_create(video=video)
