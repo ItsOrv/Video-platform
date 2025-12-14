@@ -1,12 +1,11 @@
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Count, Q
 from .models import Category
 from videos.models import Video
 
 
 def categories_list(request):
     """List all categories"""
-    from django.db.models import Count, Q
-    from videos.models import Video
     
     categories = Category.objects.filter(is_active=True).annotate(
         video_count=Count('videos', filter=Q(videos__is_active=True))
@@ -22,7 +21,7 @@ def category_detail(request, slug):
     videos = Video.objects.filter(
         category=category,
         is_active=True
-    ).order_by('-uploaded_at')
+    ).select_related('uploaded_by', 'category').prefetch_related('tags').order_by('-uploaded_at')
     
     context = {
         'category': category,
