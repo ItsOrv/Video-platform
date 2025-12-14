@@ -59,28 +59,34 @@ def review_report(request, report_id):
         if action == 'approve':
             # Take action on reported content
             if report.content_type == 'video':
-                video = Video.objects.get(id=report.content_id)
-                video.is_active = False
-                video.save()
-                
-                ContentModeration.objects.create(
-                    moderator=request.user,
-                    content_type='video',
-                    content_id=report.content_id,
-                    action='removed',
-                    reason=review_notes
-                )
+                try:
+                    video = Video.objects.get(id=report.content_id)
+                    video.is_active = False
+                    video.save()
+                    
+                    ContentModeration.objects.create(
+                        moderator=request.user,
+                        content_type='video',
+                        content_id=report.content_id,
+                        action='removed',
+                        reason=review_notes
+                    )
+                except Video.DoesNotExist:
+                    messages.error(request, 'Video not found.')
             elif report.content_type == 'comment':
-                comment = Comment.objects.get(id=report.content_id)
-                comment.delete()
-                
-                ContentModeration.objects.create(
-                    moderator=request.user,
-                    content_type='comment',
-                    content_id=report.content_id,
-                    action='removed',
-                    reason=review_notes
-                )
+                try:
+                    comment = Comment.objects.get(id=report.content_id)
+                    comment.delete()
+                    
+                    ContentModeration.objects.create(
+                        moderator=request.user,
+                        content_type='comment',
+                        content_id=report.content_id,
+                        action='removed',
+                        reason=review_notes
+                    )
+                except Comment.DoesNotExist:
+                    messages.error(request, 'Comment not found.')
             
             report.status = 'resolved'
             report.reviewed_by = request.user
