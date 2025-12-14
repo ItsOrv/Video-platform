@@ -80,7 +80,7 @@ def subscribe(request, subscription_type):
             )
             
             # Update user profile
-            profile = request.user.profile
+            profile, created = UserProfile.objects.get_or_create(user=request.user)
             profile.subscription_type = subscription_type
             
             # Calculate expiry date
