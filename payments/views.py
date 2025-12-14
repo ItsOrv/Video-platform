@@ -6,6 +6,7 @@ from datetime import timedelta
 from .models import Payment, Subscription, VideoPurchase
 from .services import process_payment
 from videos.models import Video
+from accounts.models import UserProfile
 
 
 @login_required
