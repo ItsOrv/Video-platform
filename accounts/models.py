@@ -1,11 +1,9 @@
-from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils import timezone
 from datetime import timedelta
+
 
 class UserProfile(models.Model):
     SUBSCRIPTION_CHOICES = [
@@ -34,19 +32,6 @@ class UserProfile(models.Model):
         return False
 
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_user_profile(sender, instance, created, **kwargs):
-    """Create UserProfile when a new user is created"""
-    if created:
-        UserProfile.objects.get_or_create(user=instance)
-
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def save_user_profile(sender, instance, **kwargs):
-    """Save UserProfile when user is saved"""
-    if hasattr(instance, 'profile'):
-        instance.profile.save()
-
 class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True, null=True)
 
@@ -66,11 +51,8 @@ class CustomUser(AbstractUser):
                     return True
         
         # Check if user has made a payment for this specific video
-        from payments.models import Payment, VideoPurchase
-        if hasattr(self, 'video_purchases'):
-            return VideoPurchase.objects.filter(user=self, video=video, payment__success=True).exists()
-        
-        return False
+        from payments.models import VideoPurchase
+        return VideoPurchase.objects.filter(user=self, video=video, payment__success=True).exists()
     
     def has_active_subscription(self):
         """Check if user has an active subscription"""
