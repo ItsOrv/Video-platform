@@ -6,16 +6,23 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.conf import settings
 import os
-from .models import Video, Comment, WatchHistory, Playlist, VideoFavorite, UserFollow
+from .models import Video, Comment, WatchHistory, Playlist, VideoFavorite, UserFollow, VideoLike
 from categories.models import Category
 from tags.models import Tag
 
 def index(request):
     # Get featured videos for the homepage
     try:
-        featured_videos = list(Video.objects.filter(is_active=True, is_featured=True)[:6])
-        trending_videos = list(Video.objects.filter(is_active=True).order_by('-views_count', '-uploaded_at')[:8])
-        all_videos = list(Video.objects.filter(is_active=True)[:12])
+        featured_videos = list(Video.objects.filter(
+            is_active=True, 
+            is_featured=True
+        ).select_related('uploaded_by', 'category')[:6])
+        trending_videos = list(Video.objects.filter(
+            is_active=True
+        ).select_related('uploaded_by', 'category').order_by('-views_count', '-uploaded_at')[:8])
+        all_videos = list(Video.objects.filter(
+            is_active=True
+        ).select_related('uploaded_by', 'category')[:12])
         
         # Get continue watching for authenticated users
         continue_watching = []
@@ -23,7 +30,7 @@ def index(request):
             continue_watching = WatchHistory.objects.filter(
                 user=request.user,
                 completed=False
-            ).order_by('-watched_at')[:6]
+            ).select_related('video', 'video__uploaded_by').order_by('-watched_at')[:6]
     except Exception as e:
         featured_videos = []
         trending_videos = []
@@ -117,25 +124,40 @@ def get_started(request):
     return render(request, 'get_started.html')
 
 def handler404(request, exception):
-    return render(request, 'index.html', status=404)
+    """Custom 404 error handler"""
+    return render(request, 'errors/404.html', status=404)
 
 def handler500(request):
-    return render(request, 'index.html', status=500)
+    """Custom 500 error handler"""
+    return render(request, 'errors/500.html', status=500)
 
 def video_detail(request, video_id):
     video = get_object_or_404(Video, id=video_id, is_active=True)
     
-    # Increment view count
-    video.views_count += 1
-    video.save(update_fields=['views_count'])
+    # Check if user has access to premium video
+    if video.is_premium and request.user.is_authenticated:
+        if not request.user.has_paid_for_video(video):
+            messages.warning(request, 'This is a premium video. Please purchase it to watch.')
+            return redirect('payments:video_payment', video_id=video_id)
+    elif video.is_premium and not request.user.is_authenticated:
+        messages.info(request, 'Please sign in to purchase and watch this premium video.')
+        return redirect('sign_in')
     
-    # Get comments
-    comments = Comment.objects.filter(video=video, parent=None).order_by('-created_at')[:50]
+    # Increment view count (only for authenticated users or track anonymously)
+    if request.user.is_authenticated:
+        video.views_count += 1
+        video.save(update_fields=['views_count'])
     
-    # Get related videos (same category or similar tags)
+    # Get comments with user info
+    comments = Comment.objects.filter(
+        video=video, 
+        parent=None
+    ).select_related('user').order_by('-created_at')[:50]
+    
+    # Get related videos (same category or similar tags) with optimized query
     related_videos = Video.objects.filter(
         is_active=True
-    ).exclude(id=video.id)
+    ).exclude(id=video.id).select_related('uploaded_by', 'category')
     
     if video.category:
         related_videos = related_videos.filter(category=video.category)
@@ -152,7 +174,7 @@ def video_detail(request, video_id):
         try:
             like = video.likes.get(user=request.user)
             user_liked = like.is_like
-        except:
+        except VideoLike.DoesNotExist:
             pass
         user_favorited = video.favorited_by.filter(user=request.user).exists()
     
@@ -174,8 +196,8 @@ def user_profile(request):
     total_views = uploaded_videos.aggregate(total=Sum('views_count'))['total'] or 0
     uploaded_count = uploaded_videos.count()
     
-    # Get playlists
-    playlists = Playlist.objects.filter(user=user)
+    # Get playlists with video counts
+    playlists = Playlist.objects.filter(user=user).prefetch_related('videos')
     
     # Get favorites
     favorites = VideoFavorite.objects.filter(user=user).select_related('video')[:50]
@@ -277,14 +299,21 @@ def upload_video(request):
         tags_input = request.POST.get('tags', '')
         is_premium = request.POST.get('is_premium') == 'on'
         price = request.POST.get('price', '0.00')
-        is_featured = request.POST.get('is_featured') == 'on'
+        is_featured = request.POST.get('is_featured') == 'on' and request.user.is_staff  # Only staff can feature
         
-        if not title or not video_file:
-            messages.error(request, 'Title and video file are required.')
+        # Validation
+        if not title:
+            messages.error(request, 'Title is required.')
+        elif len(title) > 255:
+            messages.error(request, 'Title is too long. Maximum 255 characters.')
+        elif not video_file:
+            messages.error(request, 'Video file is required.')
         else:
             # Validate file size (max 2GB)
             if video_file.size > 2 * 1024 * 1024 * 1024:
                 messages.error(request, 'Video file is too large. Maximum size is 2GB.')
+            elif video_file.size < 1024:  # At least 1KB
+                messages.error(request, 'Video file is too small.')
             else:
                 # Validate file type
                 allowed_extensions = ['.mp4', '.avi', '.mov', '.mkv', '.webm']
@@ -292,18 +321,47 @@ def upload_video(request):
                 if file_ext not in allowed_extensions:
                     messages.error(request, f'Invalid file type. Allowed types: {", ".join(allowed_extensions)}')
                 else:
+                    # Validate thumbnail if provided
+                    if thumbnail:
+                        if thumbnail.size > 5 * 1024 * 1024:  # 5MB max
+                            messages.error(request, 'Thumbnail is too large. Maximum size is 5MB.')
+                            thumbnail = None
+                        else:
+                            allowed_image_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+                            thumb_ext = os.path.splitext(thumbnail.name)[1].lower()
+                            if thumb_ext not in allowed_image_extensions:
+                                messages.warning(request, 'Invalid thumbnail format. Using default.')
+                                thumbnail = None
+                    
+                    # Validate price
+                    try:
+                        price_float = float(price) if price else 0.00
+                        if price_float < 0:
+                            price_float = 0.00
+                    except (ValueError, TypeError):
+                        price_float = 0.00
+                    
+                    if is_premium and price_float <= 0:
+                        messages.warning(request, 'Premium videos should have a price. Setting to free.')
+                        is_premium = False
                     # Create video
-                    video = Video.objects.create(
-                        title=title,
-                        description=description,
-                        file=video_file,
-                        thumbnail=thumbnail if thumbnail else None,
-                        uploaded_by=request.user,
-                        is_premium=is_premium,
-                        price=float(price) if price else 0.00,
-                        is_featured=is_featured,
-                        duration=0,  # Will be updated by celery task
-                    )
+                    try:
+                        video = Video.objects.create(
+                            title=title,
+                            description=description,
+                            file=video_file,
+                            thumbnail=thumbnail if thumbnail else None,
+                            uploaded_by=request.user,
+                            is_premium=is_premium,
+                            price=price_float,
+                            is_featured=is_featured,
+                            duration=0,  # Will be updated by celery task
+                        )
+                    except Exception as e:
+                        messages.error(request, f'Error creating video: {str(e)}')
+                        categories = Category.objects.filter(is_active=True)
+                        context = {'categories': categories}
+                        return render(request, 'videos/upload.html', context)
                     
                     # Set category
                     if category_id:
@@ -324,6 +382,16 @@ def upload_video(request):
                                     defaults={'slug': tag_name.lower().replace(' ', '-')}
                                 )
                                 video.tags.add(tag)
+                    
+                    # Trigger Celery task for video processing
+                    try:
+                        from .tasks import process_video
+                        process_video.delay(video.id)
+                    except Exception as e:
+                        # If Celery is not available, log the error but don't fail
+                        import logging
+                        logger = logging.getLogger(__name__)
+                        logger.warning(f"Could not queue video processing task: {e}")
                     
                     messages.success(request, 'Video uploaded successfully! It will be processed shortly.')
                     return redirect('videos:video_detail', video_id=video.id)
@@ -373,7 +441,9 @@ def edit_video(request, video_id):
         video.is_premium = request.POST.get('is_premium') == 'on'
         price = request.POST.get('price', '0.00')
         video.price = float(price) if price else 0.00
-        video.is_featured = request.POST.get('is_featured') == 'on'
+        # Only staff can feature videos
+        if request.user.is_staff:
+            video.is_featured = request.POST.get('is_featured') == 'on'
         video.is_active = request.POST.get('is_active') == 'on'
         
         video.save()
