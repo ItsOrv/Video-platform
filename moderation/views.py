@@ -37,7 +37,9 @@ def moderation_dashboard(request):
     """Moderation dashboard for staff"""
     pending_reports = Report.objects.filter(status='pending').order_by('-created_at')[:50]
     recent_actions = ContentModeration.objects.all().order_by('-created_at')[:20]
-    active_bans = BannedUser.objects.filter(is_permanent=True) | BannedUser.objects.filter(expires_at__gt=timezone.now())
+    active_bans = BannedUser.objects.filter(
+        Q(is_permanent=True) | Q(expires_at__gt=timezone.now())
+    )
     
     context = {
         'pending_reports': pending_reports,
