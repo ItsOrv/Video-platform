@@ -41,7 +41,7 @@ def update_subscription(request, subscription_type):
 
 
 def register(request):
-    """User registration"""
+    """User registration with input validation"""
     if request.user.is_authenticated:
         return redirect('home')
     
@@ -51,24 +51,43 @@ def register(request):
         password = request.POST.get('password', '')
         confirm_password = request.POST.get('confirm_password', '')
         
+        # Input validation and sanitization
         if not all([username, email, password]):
             messages.error(request, 'Please fill in all required fields.')
+        elif len(username) < 3 or len(username) > 30:
+            messages.error(request, 'Username must be between 3 and 30 characters.')
+        elif not username.replace('_', '').replace('-', '').isalnum():
+            messages.error(request, 'Username can only contain letters, numbers, hyphens, and underscores.')
+        elif '@' not in email or len(email) > 254:
+            messages.error(request, 'Please enter a valid email address.')
         elif password != confirm_password:
             messages.error(request, 'Passwords do not match.')
         elif len(password) < 8:
             messages.error(request, 'Password must be at least 8 characters long.')
+        elif len(password) > 128:
+            messages.error(request, 'Password is too long (maximum 128 characters).')
         else:
             try:
                 from accounts.models import CustomUser
-                user = CustomUser.objects.create_user(
-                    username=username,
-                    email=email,
-                    password=password
-                )
-                messages.success(request, 'Account created successfully! Please sign in.')
-                return redirect('sign_in')
+                # Check if username or email already exists
+                if CustomUser.objects.filter(username=username).exists():
+                    messages.error(request, 'Username already exists. Please choose another.')
+                elif CustomUser.objects.filter(email=email).exists():
+                    messages.error(request, 'Email already registered. Please sign in or use a different email.')
+                else:
+                    user = CustomUser.objects.create_user(
+                        username=username,
+                        email=email,
+                        password=password
+                    )
+                    messages.success(request, 'Account created successfully! Please sign in.')
+                    return redirect('sign_in')
             except Exception as e:
-                messages.error(request, f'Error creating account: {str(e)}')
+                # Don't expose internal error details to users
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"Error creating account: {str(e)}", exc_info=True)
+                messages.error(request, 'An error occurred while creating your account. Please try again.')
     
     return render(request, 'accounts/register.html')
 
@@ -102,26 +121,66 @@ def logout_view(request):
 
 @login_required
 def profile(request):
-    """User profile page"""
+    """User profile page with input validation"""
     user = request.user
     # Ensure profile exists
     from .models import UserProfile
     profile, created = UserProfile.objects.get_or_create(user=user)
     
     if request.method == 'POST':
-        # Update profile
+        # Update profile with validation
         if profile:
-            profile.bio = request.POST.get('bio', profile.bio)
+            bio = request.POST.get('bio', '').strip()
+            # Limit bio length to prevent abuse
+            if len(bio) <= 500:
+                profile.bio = bio
+            else:
+                messages.error(request, 'Bio cannot exceed 500 characters.')
+                bio = bio[:500]
+                profile.bio = bio
+            
+            # Validate and save avatar if provided
             if request.FILES.get('avatar'):
-                profile.avatar = request.FILES.get('avatar')
+                avatar = request.FILES['avatar']
+                # Check file size (max 5MB)
+                if avatar.size > 5 * 1024 * 1024:
+                    messages.error(request, 'Avatar file size cannot exceed 5MB.')
+                else:
+                    # Check file type
+                    allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+                    if avatar.content_type in allowed_types:
+                        profile.avatar = avatar
+                    else:
+                        messages.error(request, 'Invalid file type. Please upload a JPEG, PNG, GIF, or WebP image.')
             profile.save()
         
-        # Update user info
-        user.email = request.POST.get('email', user.email)
-        user.first_name = request.POST.get('first_name', user.first_name)
-        user.last_name = request.POST.get('last_name', user.last_name)
+        # Update user info with validation
+        email = request.POST.get('email', '').strip()
+        if email and '@' in email and len(email) <= 254:
+            user.email = email
+        elif email:
+            messages.error(request, 'Please enter a valid email address.')
+        
+        first_name = request.POST.get('first_name', '').strip()
+        if len(first_name) <= 150:
+            user.first_name = first_name
+        else:
+            messages.error(request, 'First name cannot exceed 150 characters.')
+        
+        last_name = request.POST.get('last_name', '').strip()
+        if len(last_name) <= 150:
+            user.last_name = last_name
+        else:
+            messages.error(request, 'Last name cannot exceed 150 characters.')
+        
         if hasattr(user, 'phone_number'):
-            user.phone_number = request.POST.get('phone_number', user.phone_number)
+            phone_number = request.POST.get('phone_number', '').strip()
+            # Basic phone validation
+            if phone_number and len(phone_number) <= 20:
+                user.phone_number = phone_number
+            elif phone_number:
+                messages.error(request, 'Phone number is too long.')
+        
         user.save()
         
         messages.success(request, 'Profile updated successfully!')
@@ -163,20 +222,47 @@ def sign_in_view(request):
     return render(request, 'sign_in.html')
 
 def sign_up_view(request):
+    """User sign up with input validation"""
+    if request.user.is_authenticated:
+        return redirect('home')
+    
     if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        confirm_password = request.POST.get('confirm_password')
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
         
-        if password != confirm_password:
+        # Input validation and sanitization
+        if not all([username, email, password]):
+            messages.error(request, 'Please fill in all required fields.')
+        elif len(username) < 3 or len(username) > 30:
+            messages.error(request, 'Username must be between 3 and 30 characters.')
+        elif not username.replace('_', '').replace('-', '').isalnum():
+            messages.error(request, 'Username can only contain letters, numbers, hyphens, and underscores.')
+        elif '@' not in email or len(email) > 254:
+            messages.error(request, 'Please enter a valid email address.')
+        elif password != confirm_password:
             messages.error(request, 'Passwords do not match.')
+        elif len(password) < 8:
+            messages.error(request, 'Password must be at least 8 characters long.')
+        elif len(password) > 128:
+            messages.error(request, 'Password is too long (maximum 128 characters).')
         else:
             try:
                 from accounts.models import CustomUser
-                user = CustomUser.objects.create_user(username=username, email=email, password=password)
-                messages.success(request, 'Account created successfully! Please sign in.')
-                return redirect('sign_in')
+                # Check if username or email already exists
+                if CustomUser.objects.filter(username=username).exists():
+                    messages.error(request, 'Username already exists. Please choose another.')
+                elif CustomUser.objects.filter(email=email).exists():
+                    messages.error(request, 'Email already registered. Please sign in or use a different email.')
+                else:
+                    user = CustomUser.objects.create_user(username=username, email=email, password=password)
+                    messages.success(request, 'Account created successfully! Please sign in.')
+                    return redirect('sign_in')
             except Exception as e:
-                messages.error(request, f'Error creating account: {str(e)}')
+                # Don't expose internal error details to users
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"Error creating account: {str(e)}", exc_info=True)
+                messages.error(request, 'An error occurred while creating your account. Please try again.')
     return render(request, 'sign_up.html')
