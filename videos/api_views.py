@@ -13,9 +13,24 @@ class VideoListView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        videos = Video.objects.filter(is_active=True)
-        serializer = VideoSerializer(videos, many=True)
-        return Response(serializer.data)
+        try:
+            videos = Video.objects.filter(is_active=True).select_related(
+                'uploaded_by', 'category'
+            ).prefetch_related('tags')
+            # Limit results to prevent large responses
+            limit = int(request.GET.get('limit', 50))
+            if limit > 100:
+                limit = 100
+            videos = videos[:limit]
+            serializer = VideoSerializer(videos, many=True)
+            return Response(serializer.data)
+        except (ValueError, TypeError) as e:
+            return Response({'error': 'Invalid request parameters'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error in VideoListView: {str(e)}", exc_info=True)
+            return Response({'error': 'An error occurred'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class VideoLikeView(APIView):
@@ -115,8 +130,13 @@ class CommentCreateView(APIView):
         content = request.data.get('content', '').strip()
         parent_id = request.data.get('parent_id')
         
+        # Validate content
         if not content:
             return Response({'error': 'Content is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if len(content) > 5000:  # Max comment length
+            return Response({'error': 'Comment is too long. Maximum 5000 characters.'}, status=status.HTTP_400_BAD_REQUEST)
+        if len(content) < 1:
+            return Response({'error': 'Comment cannot be empty'}, status=status.HTTP_400_BAD_REQUEST)
         
         parent = None
         if parent_id:
