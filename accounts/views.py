@@ -2,15 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordResetForm
-from django.core.mail import send_mail
-from django.conf import settings
 
-@login_required
-def profile_view(request):
-    profile = request.user.profile
-    return render(request, 'accounts/profile.html', {'profile': profile})
 
 @login_required
 def update_subscription(request, subscription_type):
@@ -19,7 +12,9 @@ def update_subscription(request, subscription_type):
         messages.error(request, 'Invalid subscription type.')
         return redirect('accounts:profile')
     
-    profile = request.user.profile
+    # Ensure profile exists
+    from .models import UserProfile
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
     profile.subscription_type = subscription_type
     
     # Set subscription_expiry logic
@@ -44,12 +39,6 @@ def update_subscription(request, subscription_type):
     messages.success(request, f'Subscription updated to {subscription_type}.')
     return redirect('accounts:profile')
 
-
-
-
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout, authenticate
-from django.contrib import messages
 
 def register(request):
     """User registration"""
@@ -115,7 +104,9 @@ def logout_view(request):
 def profile(request):
     """User profile page"""
     user = request.user
-    profile = user.profile if hasattr(user, 'profile') else None
+    # Ensure profile exists
+    from .models import UserProfile
+    profile, created = UserProfile.objects.get_or_create(user=user)
     
     if request.method == 'POST':
         # Update profile
