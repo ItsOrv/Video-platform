@@ -4,8 +4,26 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-u1+ng!1m8y0%-ueijwn#6#hm+_(1-ev$e415duh+&qd+8$1770')
+# SECURITY: SECRET_KEY must be set via environment variable in production
+# Get DEBUG first to check if we're in development mode
 DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    if DEBUG:
+        # Only allow default in development mode
+        import warnings
+        warnings.warn(
+            "SECRET_KEY not set. Using insecure default for development only. "
+            "Set SECRET_KEY environment variable for production!",
+            UserWarning
+        )
+        SECRET_KEY = 'django-insecure-u1+ng!1m8y0%-ueijwn#6#hm+_(1-ev$e415duh+&qd+8$1770'
+    else:
+        raise ValueError(
+            "SECRET_KEY environment variable is required for production. "
+            "Please set it in your environment or .env file."
+        )
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
