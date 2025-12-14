@@ -22,7 +22,7 @@ def tag_detail(request, slug):
     videos = Video.objects.filter(
         tags=tag,
         is_active=True
-    ).order_by('-uploaded_at')
+    ).select_related('uploaded_by', 'category').prefetch_related('tags').order_by('-uploaded_at')
     
     context = {
         'tag': tag,
