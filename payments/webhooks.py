@@ -2,10 +2,14 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import json
+import os
+import logging
 from .models import Payment, Subscription, VideoPurchase
 from accounts.models import UserProfile
 from django.utils import timezone
 from datetime import timedelta
+
+logger = logging.getLogger(__name__)
 
 
 @csrf_exempt
@@ -13,11 +17,48 @@ from datetime import timedelta
 def payment_webhook(request):
     """
     Handle payment webhook from payment gateway
+    Includes signature verification for security
     """
     try:
+        # SECURITY: Verify webhook signature to prevent unauthorized requests
+        webhook_secret = os.environ.get('PAYMENT_WEBHOOK_SECRET')
+        if webhook_secret:
+            import hmac
+            import hashlib
+            from django.conf import settings
+            
+            # Get signature from header (common patterns: X-Signature, X-Webhook-Signature, Signature)
+            received_signature = (
+                request.headers.get('X-Signature') or 
+                request.headers.get('X-Webhook-Signature') or 
+                request.headers.get('Signature') or
+                ''
+            )
+            
+            if received_signature:
+                # Calculate expected signature
+                expected_signature = hmac.new(
+                    webhook_secret.encode('utf-8'),
+                    request.body,
+                    hashlib.sha256
+                ).hexdigest()
+                
+                # Use constant-time comparison to prevent timing attacks
+                if not hmac.compare_digest(received_signature, expected_signature):
+                    logger.warning(f"Invalid webhook signature. IP: {request.META.get('REMOTE_ADDR')}")
+                    return JsonResponse({'error': 'Invalid signature'}, status=401)
+            else:
+                # In production, require signature
+                if not settings.DEBUG:
+                    logger.warning(f"Missing webhook signature. IP: {request.META.get('REMOTE_ADDR')}")
+                    return JsonResponse({'error': 'Missing signature'}, status=401)
+        
         # Parse webhook payload
-        # This is a generic implementation - adapt to your payment gateway
-        payload = json.loads(request.body)
+        
+        try:
+            payload = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
         
         transaction_id = payload.get('transaction_id')
         status = payload.get('status')
@@ -42,7 +83,11 @@ def payment_webhook(request):
             # Handle subscription payments
             if 'subscription' in payload.get('description', '').lower():
                 subscription_type = payload.get('subscription_type', 'monthly')
-                profile = payment.user.profile
+                if subscription_type not in ['monthly', 'yearly']:
+                    subscription_type = 'monthly'
+                
+                # Ensure profile exists
+                profile, created = UserProfile.objects.get_or_create(user=payment.user)
                 profile.subscription_type = subscription_type
                 
                 if subscription_type == 'monthly':
@@ -86,4 +131,8 @@ def payment_webhook(request):
         return JsonResponse({'status': 'success'})
     
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        # Log error but don't expose details to client
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Webhook error: {str(e)}", exc_info=True)
+        return JsonResponse({'error': 'Internal server error'}, status=500)
