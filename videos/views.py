@@ -100,8 +100,11 @@ def index(request):
 
 def browse(request):
     try:
-        videos = Video.objects.filter(is_active=True)[:24]
-    except:
+        videos = Video.objects.filter(is_active=True).select_related('uploaded_by', 'category')[:24]
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error in browse view: {e}", exc_info=True)
         videos = []
     context = {'videos': videos}
     # Use template from main templates directory
@@ -109,8 +112,11 @@ def browse(request):
 
 def trending(request):
     try:
-        videos = Video.objects.filter(is_active=True).order_by('-uploaded_at')[:24]
-    except:
+        videos = Video.objects.filter(is_active=True).select_related('uploaded_by', 'category').order_by('-views_count', '-uploaded_at')[:24]
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error in trending view: {e}", exc_info=True)
         videos = []
     context = {'videos': videos}
     # Use template from main templates directory
